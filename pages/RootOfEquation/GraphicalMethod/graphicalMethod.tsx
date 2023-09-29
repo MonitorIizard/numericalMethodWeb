@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import RootOfEquation from "../app";
-import CalculateIcon from '@mui/icons-material/Calculate';
+import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 
 
@@ -80,8 +81,8 @@ function page() {
     <>
       <div
         className="bg-green-100 w-scree  h-screen
-                        text-black"
-      >
+                   text-black"
+      > 
         <h1 className="text-center text-3xl font-bold">Graphical Method</h1>
         <form action="">
           <label htmlFor="">
@@ -115,7 +116,9 @@ function page() {
             <br />
             <Button variant="contained"
                     type="submit"
-                    className="bg-black">Calculate 😉</Button>
+                    className="bg-black"
+                    startIcon={ <CalculateRoundedIcon/> }
+                    >Calculate 😉</Button>
           </label>
         </form>
       </div>
