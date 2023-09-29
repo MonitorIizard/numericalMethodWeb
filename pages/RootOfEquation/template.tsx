@@ -1,10 +1,10 @@
-import { FormEvent, useState } from "react";
-import RootOfEquation from "../app";
+import { useState } from "react";
+import RootOfEquation from "./app";
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 // import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
 
 
 class GraphicalMethod extends RootOfEquation {
@@ -61,7 +61,7 @@ class GraphicalMethod extends RootOfEquation {
   }
 }
 
-function page() {
+function page( ) {
   const [equation, setEquation] = useState<string>("1");
   const [xStart, setxStart] = useState<number>(0);
   const [xEnd, setxEnd] = useState<number>(0);
@@ -89,15 +89,14 @@ function page() {
         className="bg-green-100 w-scree  h-screen
                    text-black"
       > 
-        <h1 className="text-center text-3xl font-bold
-                       py-4">Bisection Method</h1>
+        <h1 className="text-center text-3xl font-bold">Graphical Method</h1>
 
         <div className=" flex justify-center">
 
           <form action=""
                 onSubmit={ eventHandler }>
 
-              <div className="">
+              <div className="w-full">
                 <label htmlFor=""> f(x) = </label>
                 <input
                   className="w-80"
@@ -107,7 +106,7 @@ function page() {
                 />
               </div>
 
-              <div className="py-4">
+              <div className="">
                 <label htmlFor="">Range = [ </label>
                 <input type="text" 
                        className="w-8"
@@ -122,7 +121,7 @@ function page() {
 
               </div>
 
-              <div className="py-4">
+              <div>
                 <label htmlFor="">Tolerance ={" "}</label>
                 <input
                   type="text"
@@ -140,7 +139,7 @@ function page() {
 
         </div>
 
-        <p className="text-center py-4"> x = {answer.map( ( element, index ) => { 
+        <p className="text-center"> x = {answer.map( ( element, index ) => { 
           if ( index == answer.length - 1 ) return  `${element}` 
           return `${element}, ` 
           } ) }</p>
@@ -151,23 +150,3 @@ function page() {
 }
 
 export default page;
-
-{
-  /* <form action="" onSubmit={eventHandler}>
-          <label htmlFor="">
-            f(x) ={" "}
-            <input
-              type="text"
-              name="fx"
-              onInput={(e) => setEquation(e.currentTarget.value)}
-            />
-            xToStart = <input type="text" 
-                              name="xToStart" 
-                              onInput={(e) => setxToStart(Number(e.currentTarget.value))}/>
-            tolerance = <input type="text" name="tolerance" 
-                         onInput={(e) => setTolerance(Number(e.currentTarget.value))}/>
-
-            <button type="submit">submit</button>
-          </label>
-        </form> */
-}

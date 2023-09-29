@@ -1,13 +1,10 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import RootOfEquation from "../app";
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 // import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
-
-class GraphicalMethod extends RootOfEquation {
+class BisectionMethod extends RootOfEquation {
   fx: string;
 
   constructor(props: { xStart: number; xEnd : number; tolerance: number; fx: string }) {
@@ -19,45 +16,47 @@ class GraphicalMethod extends RootOfEquation {
     return eval(this.fx);
   }
 
+  findXm( xl : number, xr : number ) {
+    return (xl + xr) / 2;
+  }
+
   solve( setAnswer: ( value : string[] ) => void ) {
-    let answer:string[] = [];
-    let p = 1;
-    let x = this.xStart;
-    let temp = x;
-    let temp1 = x;
+    let answer: string[] = [];
+    let xl = this.xStart;
+    let xr = this.xEnd;
+    let xm;
+    let temp = this.f(xl);
 
-    while (true) {
+    while( true ) {
+      
+      xm = this.findXm( xl, xr );
 
-      if ( x < this.xStart || x > this.xEnd ) 
-        { 
-          if ( answer.length == 0 ) {
-            answer.push("root of equation is out of index");
-          }
+      if ( this.f(xm) * this.f(xl) > 0  && this.f(xm) * this.f(xr) > 0 ) {
+        answer.push("root of equation out of index");
+        break;
+      }
 
-          break; 
-        }
+      if ( this.f(xm) == 0 || Math.abs( (this.f(xm) - this.f(temp)) / this.f(xm) ) < this.tolerance) {
+        answer.push( xm.toString() );
+        break;
+      }
 
-      if ( this.f(x) == 0 || Math.abs(this.f(x) - this.f(temp) / this.f(x)) < this.tolerance ) {
-          console.log( x );
-          console.log("found x ");
-          answer.push(x.toString());
-        }
+      if( this.f(xm) * this.f(xl) < 0 )  {
+        xr = xm;
+      } 
+      
+      if ( this.f(xm) * this.f(xr) < 0 ){
+        xl = xm;
+      }
 
-      // if (this.f(temp) / this.f(x) < 0) {
-      //   x = temp;
-      //   temp = temp1;
-      //   p /= 10;
-      // } else {
-      //   temp = x;
-      // }
+      // console.log( `f${}` );
 
-      temp1 = temp;
-
-      console.log(x);
-      x += p;
-    }
-
+    temp = xm;
+    // console.log( );
+  }
+    // console.log( this.f(xm) );
     setAnswer( answer );
+    // setIteration()
   }
 }
 
@@ -67,21 +66,22 @@ function page() {
   const [xEnd, setxEnd] = useState<number>(0);
   const [tolerance, setTolerance] = useState<number>(0);
   const [answer, setAnswer] = useState<string[]>(["wait for calculate"]);
+  const [numberOfIteration, setNumberOfIteration] = useState<number>(0);
 
   function eventHandler(e: any) {
     e.preventDefault();
 
-    graphicalEquation = new GraphicalMethod({
+    bisectionMethod = new BisectionMethod({
       xStart: xStart,
       xEnd : xEnd,
       tolerance: tolerance,
       fx: equation
     });
 
-    graphicalEquation.solve( setAnswer );
+    bisectionMethod.solve( setAnswer );
   }
 
-  let graphicalEquation;
+  let bisectionMethod;
 
   return (
     <>
@@ -107,7 +107,7 @@ function page() {
                 />
               </div>
 
-              <div className="py-4">
+              <div className="pt-4">
                 <label htmlFor="">Range = [ </label>
                 <input type="text" 
                        className="w-8"
@@ -122,7 +122,7 @@ function page() {
 
               </div>
 
-              <div className="py-4">
+              <div className="pt-4">
                 <label htmlFor="">Tolerance ={" "}</label>
                 <input
                   type="text"
@@ -133,14 +133,14 @@ function page() {
 
               <Button variant="contained"
                       type="submit"
-                      className="bg-black"
+                      className="bg-black mt-4"
                       startIcon={ <CalculateRoundedIcon/> }
                       >Calculate 😉</Button>
           </form>
 
         </div>
 
-        <p className="text-center py-4"> x = {answer.map( ( element, index ) => { 
+        <p className="text-center pt-4"> x = {answer.map( ( element, index ) => { 
           if ( index == answer.length - 1 ) return  `${element}` 
           return `${element}, ` 
           } ) }</p>
@@ -151,23 +151,3 @@ function page() {
 }
 
 export default page;
-
-{
-  /* <form action="" onSubmit={eventHandler}>
-          <label htmlFor="">
-            f(x) ={" "}
-            <input
-              type="text"
-              name="fx"
-              onInput={(e) => setEquation(e.currentTarget.value)}
-            />
-            xToStart = <input type="text" 
-                              name="xToStart" 
-                              onInput={(e) => setxToStart(Number(e.currentTarget.value))}/>
-            tolerance = <input type="text" name="tolerance" 
-                         onInput={(e) => setTolerance(Number(e.currentTarget.value))}/>
-
-            <button type="submit">submit</button>
-          </label>
-        </form> */
-}

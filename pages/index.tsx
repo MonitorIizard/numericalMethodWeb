@@ -3,9 +3,10 @@ import GraphicalMethods from "@/pages/RootOfEquation/GraphicalMethod/graphicalMe
 function print() {
   return (
     <>
-      <div className="bg-white">
+      {/* <div className="bg-white">
         <GraphicalMethods />
-      </div>
+      </div> */}
+      
     </>
   );
 }
