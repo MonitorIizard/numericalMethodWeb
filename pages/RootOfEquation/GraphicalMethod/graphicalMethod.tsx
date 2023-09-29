@@ -3,13 +3,15 @@ import RootOfEquation from "../app";
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 // import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 
 class GraphicalMethod extends RootOfEquation {
   fx: string;
 
-  constructor(props: { xToStart: number; tolerance: number; fx: string }) {
-    super(props.xToStart, props.tolerance);
+  constructor(props: { xStart: number; xEnd : number; tolerance: number; fx: string }) {
+    super(props.xStart, props.xEnd, props.tolerance);
     this.fx = props.fx;
   }
 
@@ -17,62 +19,66 @@ class GraphicalMethod extends RootOfEquation {
     return eval(this.fx);
   }
 
-  solve() {
+  solve( setAnswer: ( value : string[] ) => void ) {
+    let answer:string[] = [];
     let p = 1;
     let x = this.xStart;
     let temp = x;
     let temp1 = x;
 
-    if (this.f(x) > 0) {
-      p *= -1;
-    }
+    while (true) {
 
-    // x  += p;
+      if ( x < this.xStart || x > this.xEnd ) 
+        { 
+          if ( answer.length == 0 ) {
+            answer.push("root of equation is out of index");
+          }
 
-    while (
-      this.f(x) != 0 &&
-      Math.abs(this.f(x) - this.f(temp) / this.f(x)) > 0.00006
-    ) {
-      // console.log( `temp ${temp} temp1 ${temp1} x${x}`);
+          break; 
+        }
 
-      if (this.f(temp) / this.f(x) < 0) {
-        x = temp;
-        temp = temp1;
-        p /= 10;
-      } else {
-        temp = x;
-      }
+      if ( this.f(x) == 0 || Math.abs(this.f(x) - this.f(temp) / this.f(x)) < this.tolerance ) {
+          console.log( x );
+          console.log("found x ");
+          answer.push(x.toString());
+        }
+
+      // if (this.f(temp) / this.f(x) < 0) {
+      //   x = temp;
+      //   temp = temp1;
+      //   p /= 10;
+      // } else {
+      //   temp = x;
+      // }
 
       temp1 = temp;
 
-      // console.log(x);
+      console.log(x);
       x += p;
     }
-    console.log(x);
+
+    setAnswer( answer );
   }
 }
 
 function page() {
   const [equation, setEquation] = useState<string>("1");
-  const [xToStart, setxToStart] = useState<number>(0);
+  const [xStart, setxStart] = useState<number>(0);
+  const [xEnd, setxEnd] = useState<number>(0);
   const [tolerance, setTolerance] = useState<number>(0);
+  const [answer, setAnswer] = useState<string[]>(["wait for calculate"]);
 
   function eventHandler(e: any) {
     e.preventDefault();
-    // let form = e.target;
-    // let formData = new FormData(form);
-
-    // const formJson: { [k: string]: FormDataEntryValue } = Object.fromEntries(
-    //   formData.entries()
-    // );
 
     graphicalEquation = new GraphicalMethod({
-      xToStart: xToStart,
+      xStart: xStart,
+      xEnd : xEnd,
       tolerance: tolerance,
-      fx: equation,
+      fx: equation
     });
 
-    graphicalEquation.solve();
+    graphicalEquation.solve( setAnswer );
   }
 
   let graphicalEquation;
@@ -84,43 +90,60 @@ function page() {
                    text-black"
       > 
         <h1 className="text-center text-3xl font-bold">Graphical Method</h1>
-        <form action="">
-          <label htmlFor="">
-            f(x) ={" "}
-            <input
-              className=""
-              type="text"
-              name="fx"
-              onInput={(e) => setEquation(e.currentTarget.value)}
-            />{" "}
-            <br />
-            xToStart ={" "}
-            <input
-              type="text"
-              name="xToStart"
-              onInput={(e) => setxToStart(Number(e.currentTarget.value))}
-            />
-            xToStop ={" "}
-            <input
-              type="text"
-              name="xToStart"
-              onInput={(e) => setxToStart(Number(e.currentTarget.value))}
-            />
-            <br />
-            tolerance ={" "}
-            <input
-              type="text"
-              name="tolerance"
-              onInput={(e) => setTolerance(Number(e.currentTarget.value))}
-            />
-            <br />
-            <Button variant="contained"
-                    type="submit"
-                    className="bg-black"
-                    startIcon={ <CalculateRoundedIcon/> }
-                    >Calculate 😉</Button>
-          </label>
-        </form>
+
+        <div className=" flex justify-center">
+
+          <form action=""
+                onSubmit={ eventHandler }>
+
+              <div className="w-full">
+                <label htmlFor=""> f(x) = </label>
+                <input
+                  className="w-80"
+                  type="text"
+                  name="fx"
+                  onInput={(e) => setEquation(e.currentTarget.value)}
+                />
+              </div>
+
+              <div className="">
+                <label htmlFor="">Range = [ </label>
+                <input type="text" 
+                       className="w-8"
+                       name="xStart"
+                       onInput={ (e) => setxStart(Number(e.currentTarget.value)) }/>
+                <label htmlFor=""> , </label>
+                <input type="text" 
+                       className="w-8"
+                       name="xEnd"
+                       onInput={ (e) => setxEnd(Number(e.currentTarget.value)) }/>
+                <label htmlFor=""> ]</label>
+
+              </div>
+
+              <div>
+                <label htmlFor="">Tolerance ={" "}</label>
+                <input
+                  type="text"
+                  name="tolerance"
+                  onInput={(e) => setTolerance(Number(e.currentTarget.value))}
+                />
+              </div>
+
+              <Button variant="contained"
+                      type="submit"
+                      className="bg-black"
+                      startIcon={ <CalculateRoundedIcon/> }
+                      >Calculate 😉</Button>
+          </form>
+
+        </div>
+
+        <p className="text-center"> x = {answer.map( ( element, index ) => { 
+          if ( index == answer.length - 1 ) return  `${element}` 
+          return `${element}, ` 
+          } ) }</p>
+
       </div>
     </>
   );
