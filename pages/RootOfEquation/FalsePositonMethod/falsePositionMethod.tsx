@@ -22,8 +22,8 @@ class BisectionMethod extends RootOfEquation {
     // return x - 5;
   }
 
-  findXm(xl: number, xr: number) {
-    return (xl + xr) / 2;
+  findX1(xl: number, xr: number) {
+    return (xl * this.f(xr) - xr * this.f(xl)) / (this.f(xr) - this.f(xl));
   }
 
   solve(
@@ -31,51 +31,41 @@ class BisectionMethod extends RootOfEquation {
     setIteration: (value: number) => void
   ) {
     let answer : string[] = [];
-
-    let xl = this.xStart;
-    let xr = this.xEnd;
-    let xm;
-    let temp = xl;
+    let x1;
     let iteration = 0;
-    let tolerance = this.tolerance;
-
-    while (true && iteration < 100000) {
-
-      xm = this.findXm(xl, xr);
-
-      if (this.f(xm) * this.f(xr) >  0) {
-        answer.push("root of equation out of index");
-        break;
-      }
-
-      if (
-        this.f(xm) == 0 ||
-        Math.abs((this.f(xm) - this.f(temp)) / this.f(xm)) < tolerance
-      ) {
-        answer.push(xm.toString());
-        break;
-      }
-
-      // console.log( `iteration = ${iteration}`);
-      // console.log(` xl = ${xl}, xr = ${xr}, xm = ${xm} `);
-      // console.log( ` f(xl) = ${f(xl)}, f(xr) = ${f(xr)}, f(xm) = ${f(xm)} \n` );
-
-      if (this.f(xl) * this.f(xm) <= 0) {
-        xr = xm;
-      }
-
-      if (this.f(xr) * this.f(xm) <= 0) {
-        xl = xm;
-      }
-
-      // console.log( `f${}` );
-
-      temp = xm;
-      // console.log( );
-      iteration += 1;
+    let xl = this.xStart;
+    let xr = this.xEnd; 
+    let es = this.tolerance;
+    let xOld = xl;
+    
+    if ( this.f(xl) * this.f(xr) > 0 )  {
+      answer.push("Root in not in given range");
+      setAnswer(answer);
+      return;
     }
-    // console.log( f(xm) );
-    // console.log( this.f(xm) );
+
+    while( true && iteration < 1000 ) {
+      x1 = this.findX1(xl, xr);
+
+      if( this.f(xl) * this.f(x1) <= 0 ) {
+        xl = x1;
+      } else {
+        xr = x1;
+      }
+
+      let tol = Math.abs( (this.f(xOld) - this.f(x1)) / this.f(x1)) * 100;
+
+      if ( tol < es || this.f(x1) == 0 ) {
+        answer.push( x1.toString() );
+        break;
+      }
+
+      xOld = x1;
+      iteration++;
+      console.log( x1 + " " + tol + " " + es );
+      console.log( xOld + " " + x1 + " " + this.f(xOld) + " " + this.f(x1));
+    }
+
     setAnswer(answer);
     setIteration(iteration);
   }
@@ -114,7 +104,7 @@ function page() {
           className="text-center text-3xl font-bold
                        py-4"
         >
-          Bisection Method
+          False Position Method
         </h1>
 
         <div className=" flex justify-center">
