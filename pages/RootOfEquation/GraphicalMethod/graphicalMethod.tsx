@@ -5,6 +5,7 @@ import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { Button } from "@mui/material";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Template from "../template"
 
 
 class GraphicalMethod extends RootOfEquation {
@@ -67,6 +68,7 @@ function page() {
   const [xEnd, setxEnd] = useState<number>(0);
   const [tolerance, setTolerance] = useState<number>(0);
   const [answer, setAnswer] = useState<string[]>(["wait for calculate"]);
+  const [numberOfIteration, setNumberOfIteration] = useState<number>(0);
 
   function eventHandler(e: any) {
     e.preventDefault();
@@ -83,91 +85,22 @@ function page() {
 
   let graphicalEquation;
 
+  let content = {
+    header : "Graphical Method"
+  }
+
   return (
     <>
-      <div
-        className="bg-green-100 w-scree  h-screen
-                   text-black"
-      > 
-        <h1 className="text-center text-3xl font-bold
-                       py-4">Bisection Method</h1>
-
-        <div className=" flex justify-center">
-
-          <form action=""
-                onSubmit={ eventHandler }>
-
-              <div className="">
-                <label htmlFor=""> f(x) = </label>
-                <input
-                  className="w-80"
-                  type="text"
-                  name="fx"
-                  onInput={(e) => setEquation(e.currentTarget.value)}
-                />
-              </div>
-
-              <div className="py-4">
-                <label htmlFor="">Range = [ </label>
-                <input type="text" 
-                       className="w-8"
-                       name="xStart"
-                       onInput={ (e) => setxStart(Number(e.currentTarget.value)) }/>
-                <label htmlFor=""> , </label>
-                <input type="text" 
-                       className="w-8"
-                       name="xEnd"
-                       onInput={ (e) => setxEnd(Number(e.currentTarget.value)) }/>
-                <label htmlFor=""> ]</label>
-
-              </div>
-
-              <div className="py-4">
-                <label htmlFor="">Tolerance ={" "}</label>
-                <input
-                  type="text"
-                  name="tolerance"
-                  onInput={(e) => setTolerance(Number(e.currentTarget.value))}
-                />
-              </div>
-
-              <Button variant="contained"
-                      type="submit"
-                      className="bg-black"
-                      startIcon={ <CalculateRoundedIcon/> }
-                      >Calculate 😉</Button>
-          </form>
-
-        </div>
-
-        <p className="text-center py-4"> x = {answer.map( ( element, index ) => { 
-          if ( index == answer.length - 1 ) return  `${element}` 
-          return `${element}, ` 
-          } ) }</p>
-
-      </div>
+      <Template eventHandler={eventHandler}
+                setEquation={setEquation}
+                setTolerance={setTolerance}
+                setxEnd={setxEnd}
+                setxStart={setxStart}
+                answer={answer}
+                content={content}
+                numberOfIteration={numberOfIteration}/>
     </>
   );
 }
 
 export default page;
-
-{
-  /* <form action="" onSubmit={eventHandler}>
-          <label htmlFor="">
-            f(x) ={" "}
-            <input
-              type="text"
-              name="fx"
-              onInput={(e) => setEquation(e.currentTarget.value)}
-            />
-            xToStart = <input type="text" 
-                              name="xToStart" 
-                              onInput={(e) => setxToStart(Number(e.currentTarget.value))}/>
-            tolerance = <input type="text" name="tolerance" 
-                         onInput={(e) => setTolerance(Number(e.currentTarget.value))}/>
-
-            <button type="submit">submit</button>
-          </label>
-        </form> */
-}
