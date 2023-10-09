@@ -1,8 +1,5 @@
 import { useState } from "react";
 import RootOfEquation from "../app";
-import CalculateRoundedIcon from "@mui/icons-material/CalculateRounded";
-// import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from "@mui/material";
 import Template from "../template";
 
 class BisectionMethod extends RootOfEquation {
@@ -30,7 +27,7 @@ class BisectionMethod extends RootOfEquation {
   solve(
     setAnswer: (value: string[]) => void,
     setIteration: (value: number) => void
-  ) {
+  ) : void {
     let answer : string[] = [];
 
     let xl = this.xStart;

@@ -11,5 +11,4 @@ export default abstract class RootOfEquation  {
 
   abstract f( x : number ) : number;
 
-  abstract solve( value : any ) : void;
 }
