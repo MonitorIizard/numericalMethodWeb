@@ -1,11 +1,11 @@
 export default abstract class RootOfEquation  {
   xStart : number;
-  tolerance : number;
+  es : number;
   xEnd : number;
 
-  constructor( xStart : number, xEnd : number, tolerance : number ) {
+  constructor( xStart : number, xEnd : number, es : number ) {
     this.xStart = xStart;
-    this.tolerance = tolerance;
+    this.es = es;
     this.xEnd = xEnd;
   }
 

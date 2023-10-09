@@ -1,66 +1,7 @@
-import { FormEvent, useState } from "react";
-import RootOfEquation from "../app";
-import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
-// import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from "@mui/material";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Template from "../RootOfEquationTemplate"
-
-
-class GraphicalMethod extends RootOfEquation {
-  fx: string;
-
-  constructor(props: { xStart: number; xEnd : number; tolerance: number; fx: string }) {
-    super(props.xStart, props.xEnd, props.tolerance);
-    this.fx = props.fx;
-  }
-
-  f(x: number) {
-    return eval(this.fx);
-  }
-
-  solve( setAnswer: ( value : string[] ) => void ) {
-    let answer:string[] = [];
-    let p = 1;
-    let x = this.xStart;
-    let temp = x;
-    let temp1 = x;
-
-    while (true) {
-
-      if ( x < this.xStart || x > this.xEnd ) 
-        { 
-          if ( answer.length == 0 ) {
-            answer.push("root of equation is out of index");
-          }
-
-          break; 
-        }
-
-      if ( this.f(x) == 0 || Math.abs(this.f(x) - this.f(temp) / this.f(x)) < this.tolerance ) {
-          console.log( x );
-          console.log("found x ");
-          answer.push(x.toString());
-        }
-
-      // if (this.f(temp) / this.f(x) < 0) {
-      //   x = temp;
-      //   temp = temp1;
-      //   p /= 10;
-      // } else {
-      //   temp = x;
-      // }
-
-      temp1 = temp;
-
-      console.log(x);
-      x += p;
-    }
-
-    setAnswer( answer );
-  }
-}
+import { useState } from "react";
+import { SetOfResult } from "../class";
+import Template from "../RootOfEquationTemplate";
+import GraphicalMethod from "./GraphicalMethodClass";
 
 function page() {
   const [equation, setEquation] = useState<string>("1");
@@ -69,6 +10,12 @@ function page() {
   const [tolerance, setTolerance] = useState<number>(0);
   const [answer, setAnswer] = useState<string[]>(["wait for calculate"]);
   const [numberOfIteration, setNumberOfIteration] = useState<number>(0);
+  const [result, setResult] = useState<SetOfResult[]>([]);
+
+  let graphicalEquation;
+  let content = {
+    header : "Graphical Method"
+  }
 
   function eventHandler(e: any) {
     e.preventDefault();
@@ -76,17 +23,11 @@ function page() {
     graphicalEquation = new GraphicalMethod({
       xStart: xStart,
       xEnd : xEnd,
-      tolerance: tolerance,
+      es: tolerance,
       fx: equation
     });
 
-    graphicalEquation.solve( setAnswer );
-  }
-
-  let graphicalEquation;
-
-  let content = {
-    header : "Graphical Method"
+    graphicalEquation.solve( {setAnswer, setResult} );
   }
 
   return (
@@ -98,7 +39,8 @@ function page() {
                 setxStart={setxStart}
                 answer={answer}
                 content={content}
-                numberOfIteration={numberOfIteration}/>
+                numberOfIteration={numberOfIteration}
+                result={result}/>
     </>
   );
 }
