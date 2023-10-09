@@ -1,5 +1,5 @@
 import { useState } from "react";
-import RootOfEquation from "./app";
+import { RootOfEquation, SetOfResult } from "./class";
 import CalculateRoundedIcon from "@mui/icons-material/CalculateRounded";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
@@ -15,6 +15,7 @@ interface Page {
   answer: string[];
   content: { header: string };
   numberOfIteration : number;
+  result : SetOfResult[];
 }
 
 function Template({
@@ -25,7 +26,8 @@ function Template({
   setTolerance,
   answer,
   content,
-  numberOfIteration
+  numberOfIteration,
+  result
 }: Page) {
   return (
     <>
@@ -98,6 +100,8 @@ function Template({
           number of iteration is {numberOfIteration}
         </p>
       </div>
+
+      
     </>
   );
 }
