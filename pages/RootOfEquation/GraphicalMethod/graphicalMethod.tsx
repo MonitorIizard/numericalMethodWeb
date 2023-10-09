@@ -5,7 +5,7 @@ import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { Button } from "@mui/material";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Template from "../template"
+import Template from "../RootOfEquationTemplate"
 
 
 class GraphicalMethod extends RootOfEquation {

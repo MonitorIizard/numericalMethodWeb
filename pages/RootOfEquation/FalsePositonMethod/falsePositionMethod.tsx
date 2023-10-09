@@ -4,7 +4,7 @@ import CalculateRoundedIcon from "@mui/icons-material/CalculateRounded";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 import exp from "constants";
-import Template from "../template";
+import Template from "../RootOfEquationTemplate";
 
 class BisectionMethod extends RootOfEquation {
   fx: string;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import RootOfEquation from "../app";
-import Template from "../template";
+import Template from "../RootOfEquationTemplate";
 
 class BisectionMethod extends RootOfEquation {
   fx: string;
