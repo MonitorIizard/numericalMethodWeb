@@ -34,12 +34,12 @@ React Server Component
 
 โดย เราทำการเเก้ Interface ของ Column ไปเป็น String
 
-![Alt text](image.png)
+![Alt text](picInChangemd/image.png)
 
 มันจึง Error เเบบนี้
 
-![Alt text](image-2.png)
-![Alt text](image-1.png)
+![Alt text](picInChangemd/image-2.png)
+![Alt text](picInChangemd/image-1.png)
 
 เพราะอะไร
 1. อาจจะเพราะ key ของ object ไม่ใช่ type string
@@ -47,7 +47,7 @@ React Server Component
 จริงด้วย เพราะว่าใน column เราจะใช้ column.id เพื่อเข้าถึงค่าของ row ในเเถวนั้น
 
 เเต่ column.id ที่จะเอาไปเป็น key เรา assign เป็น Type string ซึ่งความจริง เป็น type ของ keyOf class นั้นดังรูป
-![Alt text](image-3.png)
+![Alt text](picInChangemd/image-3.png)
 
 23.02 `npm install Katex` and implement Math line in to `RootOfEquation.tsx`
 https://www.npmjs.com/package/react-katex
@@ -63,7 +63,7 @@ Thursday 12 October 2566
 
 10:00 ติด Bug ของ
 
-![Alt text](image-4.png)
+![Alt text](picInChangemd/image-4.png)
 
 ไม่รู้เพราะว่าอะไร เเต่เรามาลองหาวิธีการเเก้กันดีกว่า
 
@@ -71,9 +71,9 @@ https://react.dev/warnings/invalid-hook-call-warning
 
 ดูเหมือนเราจะทำผิดตรงที่เรา call hook ใน handle function
 
-![Alt text](image-7.png)
+![Alt text](picInChangemd/image-7.png)
 
- ![Alt text](image-6.png)
+ ![Alt text](picInChangemd/image-6.png)
 
  โดย Hook ควรประกาศใน `functional hook` and `custom hook`
 
