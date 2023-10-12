@@ -7,120 +7,76 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { SetOfResult } from '@/pages/RootOfEquation/class';
-
-interface Column {
-  id: 'iterationNo' | 'root' | 'tolerance';
-  label: string;
-  minWidth?: number;
-  align?: 'right';
-  format?: (value: number) => string;
-}
-
-const columns: readonly Column[] = [
-  { id: 'iterationNo', label: 'iteration no.', minWidth: 170 },
-  { id: 'root', label: 'root', minWidth: 100 ,format: (value: number) => value.toLocaleString('en-US')},
-  {
-    id: 'tolerance',
-    label: 'tolerance',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
-  }
-];
-
-interface Data {
-  root : number;
-  iterationNo : number;
-  tolerance : number;
-}
-
-function createData(
-  root : number,
-  iterationNo : number,
-  tolerance : number,
-): Data {
-  return { iterationNo, root, tolerance };
-}
+import SetOfResult from '@/pages/RootOfEquation/Class/SetOfResult';
+import Column from '@/pages/RootOfEquation/Class/Column';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 interface PropsArguement {
-  result : SetOfResult[];
+	result: SetOfResult[];
+	attributes: Column[];
 }
 
-export default function StickyHeadTable({result} : PropsArguement) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState<Data[]>([]);
+export default function StickyHeadTable({ result, attributes }: PropsArguement) {
+	const [page, setPage] = React.useState(0);
+	const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+	const handleChangePage = (event: unknown, newPage: number) => {
+		setPage(newPage);
+	};
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+	const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setRowsPerPage(+event.target.value);
+		setPage(0);
+	};
 
-  React.useEffect(() => {
-    result.forEach(element => {
-      rows.push( createData( element.iterationNo, element.root, element.tolerance) );
-    });
+	return (
+		<Paper sx={{ width: '100%', overflow: 'hidden' }}>
+			<TableContainer sx={{ maxHeight: 440 }}>
+				<Table stickyHeader aria-label="sticky table">
+					<TableHead>
+						<TableRow>
+							{attributes.map((column) => (
+								<TableCell
+									key={column.id}
+									align={column.align}
+									style={{ minWidth: column.minWidth }}
+									className="text-lg"
+								>
+									<InlineMath>{column.label}</InlineMath>
+								</TableCell>
+							))}
+						</TableRow>
+					</TableHead>
 
-    setRows( rows );
-  });
-
-  
-
-  return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.iterationNo}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
-  );
+					<TableBody>
+						{result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+							return (
+								<TableRow hover role="checkbox" tabIndex={-1} key={row.iterationNo}>
+									{attributes.map((attribute) => {
+										const value = row[attribute.id];
+										return (
+											<TableCell key={attribute.id} align={'center'}>
+												<InlineMath>{value.toString()}</InlineMath>
+											</TableCell>
+										);
+									})}
+								</TableRow>
+							);
+						})}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			<TablePagination
+				rowsPerPageOptions={[10, 25, 100]}
+				component="div"
+				count={result.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+				className="text-md"
+			/>
+		</Paper>
+	);
 }
