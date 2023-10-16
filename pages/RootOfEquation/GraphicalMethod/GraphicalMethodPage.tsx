@@ -30,24 +30,27 @@ function Page() {
 		{ id: 'tolerance', label: 'Tolerance' }
 	];
 
-	const graphicalEquation = new GraphicalMethod({
+	const graphical1 = new GraphicalMethod({
 		xStart: xStart,
 		xEnd: xEnd,
 		es: errorTol,
 		fx: equation
 	});
 
-	const initialGraphCoor = () => {
+	const initialGraphCoor = ( ) => {
 		const xs = [];
 		const ys = [];
 
-		for (let i = xStart; i < xEnd; i += 0.001) {
+		// console.log( graphical1.getFunction());
+		for (let i = graphical1.xStart; i < graphical1.xEnd; i += 0.001) {
 			xs.push(i);
-			ys.push(graphicalEquation.f(i));
+			ys.push(graphical1.f(i));
 		}
 
 		setXcoor(xs);
 		setYcoor(ys);
+		// console.log(xs);
+		// console.log(ys);
 	};
 
 	const isEquationCalculable = () => {
@@ -59,15 +62,6 @@ function Page() {
 		}
 		return true;
 	};
-
-	const isRangeReasonable = () => {
-		console.log(xStart);
-		console.log(xEnd);
-		if (xStart > xEnd) {
-			return false;
-		}
-		return true;
-	}
 
 	function eventHandler(e: any) {
 		e.preventDefault();
@@ -126,17 +120,16 @@ function Page() {
 			return;
 		}
 
-		console.log("this function is not skip");
-
 		setResult([]);
 
 		setEquation(inputEquation);
 		setxStart(+inputxStart);
 		setxEnd(+inputxEnd);
 		setErrorTol(+inputErrorTol);
+		console.log(equation);
 		initialGraphCoor();
 
-		graphicalEquation.solve({ setAnswer, setResult });
+		graphical1.solve({ setAnswer, setResult });
 	};
 
 	return (
