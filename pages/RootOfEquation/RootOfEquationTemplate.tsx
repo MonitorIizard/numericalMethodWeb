@@ -39,8 +39,7 @@ function Template({
 	return (
 		<>
 			<div
-				className="bg-green-100
-                   text-black"
+				className="text-black"
 			>
 				<h1 className="text-center text-3xl font-bold my-8">{content.header}</h1>
 
@@ -112,6 +111,7 @@ function Template({
 						</div>
 					</Card>
 
+					
 					<StickyHeadTable result={result} attributes={columns} />
 
 					<Card>

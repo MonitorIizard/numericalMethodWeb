@@ -60,27 +60,80 @@ function Page() {
 		return true;
 	};
 
-	const eventHandler = (e: any) => {
+	const isRangeReasonable = () => {
+		console.log(xStart);
+		console.log(xEnd);
+		if (xStart > xEnd) {
+			return false;
+		}
+		return true;
+	}
+
+	function eventHandler(e: any) {
 		e.preventDefault();
 
-		if (!isEquationCalculable()) {
-			setOpen(true);
-			setModalContent( { 
-				header : "Your equation is uncalculable", 
-				description : "Please input new equation" });
-			return;
-		}
-
-		setResult([]);
+		setOpen(false);
 
 		const form = e.target;
 		const formData = new FormData(form);
 		const formJson = Object.fromEntries(formData.entries());
+		const inputEquation = formJson.functionInput.toString();
+		const inputxStart = formJson.Xstart;
+		const inputxEnd = formJson.Xend;
+		const inputErrorTol = formJson.errorTol;
 
-		setEquation(formJson.functionInput.toString());
-		setxStart(+formJson.Xstart);
-		setxEnd(+formJson.Xend);
-		setErrorTol(+formJson.errorTol);
+
+		if (!isEquationCalculable()) {
+			setOpen(true);
+			setModalContent( { 
+				header : "Your equation is uncalculable 😡.", 
+				description : "Please input new equation" });
+			return;
+		}
+		
+		if((Number.isNaN(+inputxStart) ||
+				 (Number.isNaN(+inputxEnd)))) {
+			console.log( Number.isNaN(+inputxEnd) );
+			setOpen(true);
+			setModalContent( { 
+				header : "X start or X end is not a number 😡.", 
+				description : "Please input new X start or X end" });
+			return;
+		}
+
+		if(+inputxEnd < +inputxStart) {
+			console.log("test");
+			setOpen(true);
+			setModalContent( { 
+				header : "X start is Greater than X end 😡.", 
+				description : "Please input new X start or X end \n X start must <= X end" });
+			return;
+		}
+
+		if( Number.isNaN(+inputErrorTol) ){
+			setOpen(true);
+			setModalContent( { 
+				header : "Tolerance is not number 😡.", 
+				description : "Please input tolerance in number." });
+			return;
+		}
+
+		if( +inputErrorTol < 0 ){
+			setOpen(true);
+			setModalContent( { 
+				header : "Tolerance must greate than 0 😡.", 
+				description : "Please input new tolerance." });
+			return;
+		}
+
+		console.log("this function is not skip");
+
+		setResult([]);
+
+		setEquation(inputEquation);
+		setxStart(+inputxStart);
+		setxEnd(+inputxEnd);
+		setErrorTol(+inputErrorTol);
 		initialGraphCoor();
 
 		graphicalEquation.solve({ setAnswer, setResult });
@@ -88,18 +141,20 @@ function Page() {
 
 	return (
 		<>
-			<Template
-				eventHandler={eventHandler}
-				setEquation={setEquation}
-				answer={answer}
-				content={content}
-				numberOfIteration={numberOfIteration}
-				result={result}
-				columns={columns}
-				equation={equation}
-				coordinate={{ xCoor, yCoor }}
-				modal={{ open, setOpen, modalContent }}
-			/>
+			<div className='bg-green-100 w-full h-full'>
+				<Template
+					eventHandler={eventHandler}
+					setEquation={setEquation}
+					answer={answer}
+					content={content}
+					numberOfIteration={numberOfIteration}
+					result={result}
+					columns={columns}
+					equation={equation}
+					coordinate={{ xCoor, yCoor }}
+					modal={{ open, setOpen, modalContent }}
+				/>
+			</div>
 		</>
 	);
 }
