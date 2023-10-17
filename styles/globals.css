@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "mafs/core.css";
 
 :root {
 	--foreground-rgb: 0, 0, 0;
@@ -23,5 +24,9 @@ body {
 }
 
 html {
+	background-color : rgb(220 252 231);
+}
+
+#__next {
 	background-color : rgb(220 252 231);
 }

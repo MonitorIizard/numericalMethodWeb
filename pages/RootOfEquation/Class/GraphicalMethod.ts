@@ -25,14 +25,14 @@ export default class GraphicalMethod extends RootOfEquation {
 		return Math.pow(10, Math.floor(step));
 	}
 
-	solve({ setAnswer, setResult }: solveArguement) {
+	solve() {
 		let step = this.calcultateStep();
 		const MaxIter = 1000;
 		let iter = 0;
 		let x = this.xStart;
 		let temp = this.f(x);
+		let tempX = x;
 		let newTemp;
-		let answer: string[] = [];
 		let result: SetOfResult[] = [];
 
 		while( iter < MaxIter ) {	
@@ -46,10 +46,11 @@ export default class GraphicalMethod extends RootOfEquation {
 			newTemp = this.f(x);
 			
 			// console.log(`temp = ${temp} newTemp = ${newTemp} x = ${x}`);
-			let tol = Math.abs( (temp - newTemp ) / temp);
+			let tol = Math.abs( (tempX - x ) / tempX) * 100;
 			
+			result.push( new SetOfResult(iter, x, tol));
 			// console.log( tol );
-			if ( tol < this.es && temp != newTemp || newTemp == 0 ) {
+			if ( tol < this.es && x != tempX || newTemp == 0 ) {
 				break;
 			}
 
@@ -65,6 +66,7 @@ export default class GraphicalMethod extends RootOfEquation {
 				break;
 			}
 
+			tempX = x;
 			x += step;
 			iter += 1;
 			temp = newTemp;
@@ -74,9 +76,8 @@ export default class GraphicalMethod extends RootOfEquation {
 			}	
 		}
 
-		console.log( x );
-		setResult(result);
-		setAnswer(answer);
+		// console.log( x );
+		return result;
 	}
 
 	getFunction() {

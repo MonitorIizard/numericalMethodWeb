@@ -1,10 +1,17 @@
 import RootOfEquation from '../Class/RootOfEquation';
-import { Button } from '@mui/material';
+import { Button, Card, Modal, TextField } from '@mui/material';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import { BlockMath, InlineMath } from 'react-katex';
+import SetOfResult from '../Class/SetOfResult';
+import { evaluate } from 'mathjs';
+import Column from '../Class/Column';
+import StickyHeadTable from '@/components/ui/DataTable';
+import ShowSolution from '@/components/ui/ShowSolution';
+import PlotGraph from '@/pages/Graph';
+import ModalEdit from '@/components/ui/Modal';
 
 interface ConstructorInterface {
 	xStart: number;
@@ -12,66 +19,86 @@ interface ConstructorInterface {
 	fx: string;
 }
 
-interface MethodSolveParameter {
-	setNumberOfIteration: (value: number) => void;
-	setAnswer: (value: string[]) => void;
-}
-
 class OnePointIteration extends RootOfEquation {
 	fx: string;
 
-	constructor({ xStart, tolerance, fx }: ConstructorInterface) {
+	constructor({ xStart = 0, tolerance = 0, fx = ' ' }: ConstructorInterface) {
 		super(xStart, 0, tolerance);
 		this.fx = fx;
 	}
 
 	f(x: number): any {
-		try {
-			return eval(this.fx);
-			// return x-5;
-		} catch (error) {
-			console.error(error);
-		}
-
-		// return eval(this.fx);
+		return evaluate(this.fx, { x });
 	}
 
-	solve({ setNumberOfIteration, setAnswer }: MethodSolveParameter): void {
+	solve() {
 		let xNew;
 		let i = 0;
-		let answer = [];
+		let result : SetOfResult[] = [];
 		let xOld = this.xStart;
-		let es = this.tolerance;
+		let es = this.es;
 
-		while (i < 10000) {
+		while (i < 1000) {
 			xNew = this.f(xOld);
 			let tol = Math.abs((xNew - xOld) / xNew) * 100;
+			result.push(new SetOfResult(i, xNew, tol));
 			xOld = xNew;
 
 			if (tol < es) {
-				answer.push(xNew.toString());
-				setAnswer(answer);
-				setNumberOfIteration(i);
-				return;
+				break;
 			}
 
 			i++;
 		}
-		answer.push("Root of this equation can't find with this method");
-		setAnswer(answer);
+		return result;
+	}
+
+	getXStart() {
+		return this.xStart;
+	}
+
+	setXstart(xStart:number) {
+		this.xStart = xStart;
+	}
+
+	setFx(fx:string) {
+		this.fx = fx;
+	}
+
+	setTolerance(tol:number) {
+		this.es = tol;
 	}
 }
 
-function page() {
-	let onePointIterationMethod;
-	const [xStart, setxStart] = useState<number>(0);
-	const [equation, setEquation] = useState<string>(' ');
-	const [tolerance, setTolerance] = useState<number>(0);
-	const [answer, setAnswer] = useState<string[]>(['wait for calculate']);
-	const [numberOfIteration, setNumberOfIteration] = useState<number>(0);
-	const [open, setOpen] = useState(true);
+const columns: Column[] = [
+	{ id: 'iterationNo', label: 'Iteration No.' },
+	{ id: 'root', label: 'Root' },
+	{ id: 'tolerance', label: 'Tolerance' }
+];
 
-	const handleClose = () => setOpen(false);
+function page() {
+	const [showEquation, setShowEquation] = useState<string>(' ');
+	const [openNotify, setOpenNotify] = useState<boolean>(true);
+	const [equation, setEquation] = useState<string>(' ');
+	const [xStart, setxStart] = useState<number>(0);
+	const [errorTol, setErrorTol] = useState<number>(0);
+	const [answer, setAnswer] = useState<number>(0);
+	const [point, setPoint] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+	const [domain, setDomain] = useState<number[]>([-10, 10]);
+	const [range, setRange] = useState<number[]>([-10, 10]);
+	const [step, setStep] = useState<number>(1);
+	const [result, setResult] = useState<SetOfResult[]>([]);
+	const [open, setOpen] = useState(false);
+	const [modalContent, setModalContent] = useState<{ header: string; description: string }>({
+		header: 'header',
+		description: 'description'
+	});
+
+	let onePointIterationSolver = new OnePointIteration({
+		xStart: 0,
+		tolerance: 0,
+		fx: ""
+	});
 
 	const style = {
 		position: 'absolute' as 'absolute',
@@ -85,27 +112,120 @@ function page() {
 		p: 4
 	};
 
+	const isEquationCalculable = (equation:string) => {
+		let testValue = 5;
+		try {
+			evaluate(equation, { x: testValue });
+		} catch (error) {
+			return false;
+		}
+		return true;
+	};
+
 	function eventHandler(e: any) {
 		e.preventDefault();
 
-		onePointIterationMethod = new OnePointIteration({
-			xStart: xStart,
-			tolerance: tolerance,
-			fx: equation
-		});
+		// setOpen(false);
 
-		onePointIterationMethod.solve({ setNumberOfIteration, setAnswer });
+		const form = e.target;
+		const formData = new FormData(form);
+		const formJson = Object.fromEntries(formData.entries());
+		const inputEquation = formJson.functionInput.toString();
+		const inputxStart = formJson.Xstart;
+		const inputErrorTol = formJson.errorTol;
+
+    setxStart(+inputxStart);
+		
+		if (!isEquationCalculable(inputEquation)) {
+			setOpen(true);
+			setModalContent({
+				header: 'Your equation is uncalculable 😡.',
+				description: 'Please input new equation'
+			});
+			return;
+		}
+
+		if (Number.isNaN(+inputxStart)) {
+			setOpen(true);
+			setModalContent({
+				header: 'X start is not a number 😡.',
+				description: 'Please input new X start'
+			});
+			return;
+		}
+
+		if (Number.isNaN(+inputErrorTol)) {
+			setOpen(true);
+			setModalContent({
+				header: 'Tolerance is not number 😡.',
+				description: 'Please input tolerance in number.'
+			});
+			return;
+		}
+
+		if (+inputErrorTol < 0) {
+			setOpen(true);
+			setModalContent({
+				header: 'Tolerance must greate than 0 😡.',
+				description: 'Please input new tolerance.'
+			});
+			return;
+		}
+
+		setResult([]);
+
+		setEquation(inputEquation);
+		setxStart(+inputxStart);
+		setErrorTol(+inputErrorTol);
+
+		// //console.log(xStart, equation, errorTol);
+
+		// let resultOfSolve = onePointIterationSolver.solve();
+		// let answer = resultOfSolve[resultOfSolve.length - 1].root;
+		// // setResult(resultOfSolve);
+		// console.log(resultOfSolve);
+		// //setResult(resultOfSolve);
+		// setAnswer(answer);
+		// setPoint({x : answer, y : onePointIterationSolver.f(answer)});
+
+		// setStep((1000) / 10);
+		// setDomain([-(1000 / 2), (1000/ 2)]);
+		// setRange([-(1000 / 2), +(1000 / 2)]);
 	}
+
+	const count = useRef(0);
+
+	useEffect(() => {
+    if ( count.current > 1 && process.env.NODE_ENV === "development" ||
+				 count.current > 0 && process.env.NODE_ENV === "production") {
+      onePointIterationSolver.setXstart(xStart);
+		  onePointIterationSolver.setFx(equation);
+		  onePointIterationSolver.setTolerance(errorTol);
+
+		  let resultOfSolve = onePointIterationSolver.solve();
+		  let answer = resultOfSolve[resultOfSolve.length - 1].root;
+		  setResult(resultOfSolve);
+		  // console.log(resultOfSolve);
+		//setResult(resultOfSolve);
+		  setAnswer(answer);
+		  setPoint({x : answer, y : onePointIterationSolver.f(answer)});
+
+		setStep((1000) / 10);
+		setDomain([-(1000 / 2), (1000/ 2)]);
+		setRange([-(1000 / 2), +(1000 / 2)]);
+    }
+    count.current++;
+	}, [equation, errorTol, xStart])
 
 	return (
 		<div
-			className="w-scree h-screen  bg-green-100
+			className="  bg-green-100
                    text-black"
 		>
 			<div>
 				<Modal
-					open={open}
-					onClose={handleClose}
+					open={openNotify}
+					onClose={(e) => setOpenNotify(false)}
 					aria-labelledby="modal-modal-title"
 					aria-describedby="modal-modal-description"
 				>
@@ -119,17 +239,20 @@ function page() {
 							Before use one point iteration method
 						</Typography>
 						<Typography id="modal-modal-description" sx={{ mt: 2 }} className="text-black">
-							You need to reform the equation in form x = f(x) <br />{' '}
+							You need to reform the equation in form <span>
+								<InlineMath>{`x_{i+1} = f(x)`}</InlineMath>
+							</span>  <br />
 							<span className="font-black">Example</span> <br />
-							You want to find root of this equation (((5 + x) / 2) - x) = 0 <br />
-							You need to reform equation to (5 + x) / 2 = x
+							You want to find root of this equation <br /><span className='text-center'> <BlockMath>(((5 + x) / 2) - x) = 0</BlockMath></span>
+							You need to reform equation to <BlockMath>(5 + x) / 2 = x</BlockMath>
+							<BlockMath>{`x_{i+1} = (5 + x) / 2`}</BlockMath>
 						</Typography>
 						<div
 							className="flex w-full
                               justify-center pt-4"
 						>
 							<Button
-								onClick={handleClose}
+								onClick={(e) => setOpenNotify(false)}
 								className="bg-green-600 text-white
                                     hover:bg-green-300"
 							>
@@ -140,60 +263,80 @@ function page() {
 				</Modal>
 			</div>
 
-			<h1 className="text-center text-3xl font-bold">One Point Iteration</h1>
+			<h1 className="my-8 text-center text-3xl font-bold">One Point Iteration</h1>
 
-			<div className=" flex justify-center">
-				<form action="" onSubmit={eventHandler}>
-					<div className="w-full">
-						<label htmlFor=""> x = </label>
-						<input
-							className="w-80"
-							type="text"
-							name="fx"
-							onInput={(e) => setEquation(e.currentTarget.value)}
-						/>
-					</div>
-
-					<div className="">
-						<label htmlFor="">x start </label>
-						<input
-							type="text"
-							className="w-8"
-							name="xStart"
-							onInput={(e) => setxStart(Number(e.currentTarget.value))}
-						/>
-					</div>
-
+			<div className="mx-auto flex w-11/12 max-w-xl flex-col gap-4 text-xl">
+				<Card variant="outlined" className=" p-8">
+					<InlineMath math={`x_{i+1} = ${showEquation}`} />
+				</Card>
+				<Card variant="outlined" className=" p-8">
 					<div>
-						<label htmlFor="">Tolerance = </label>
-						<input
-							type="text"
-							name="tolerance"
-							onInput={(e) => setTolerance(Number(e.currentTarget.value))}
-						/>
+						<form
+							className="flex flex-wrap  gap-2"
+							action=""
+							onSubmit={(e) => {
+								eventHandler(e);
+							}}
+						>
+							<TextField
+								id="outlined-basic"
+								label="x(i+1) = "
+								variant="outlined"
+								name="functionInput"
+								fullWidth
+								size="medium"
+								onChange={(e) => {
+									setShowEquation(e.currentTarget.value);
+								}}
+								required
+							/>
+							<div className="flex w-full gap-2">
+								<TextField
+									id="outlined-basic"
+									label="X start"
+									variant="outlined"
+									name="Xstart"
+									fullWidth
+									required
+								/>
+								<TextField
+									id="outlined-basic"
+									label="Tolerance"
+									variant="outlined"
+									name="errorTol"
+									fullWidth
+									required
+								/>
+							</div>
+
+							<Button
+								variant="contained"
+								type="submit"
+								className="mx-auto mt-4 w-1/2 bg-black"
+								startIcon={<CalculateRoundedIcon />}
+								size="large"
+							>
+								Calculate 😉
+							</Button>
+						</form>
 					</div>
+				</Card>
 
-					<Button
-						variant="contained"
-						type="submit"
-						className="bg-black"
-						startIcon={<CalculateRoundedIcon />}
-					>
-						Calculate 😉
-					</Button>
-				</form>
+				<StickyHeadTable result={result} attributes={columns} />
+
+				<Card className="text-black">
+					<BlockMath>{`\\begin{align}
+									Dr \\in [ ${domain[0]}, ${domain[1]}] \\\\
+									Rr \\in [ ${range[0]}, ${range[1]}]
+								\\end{align}`}</BlockMath>
+				</Card>
+
+				<ShowSolution answer={answer} text={answer <= -5000 || answer >= 5000 ? "solution not found": ""} />
+
+				<PlotGraph equation={[equation, "x"]} step={step} domain={domain} range={range} point={point} />
+
+				<ModalEdit open={open} setOpen={setOpen} modalContent={modalContent} />
 			</div>
-
-			<p className="text-center">
-				{' '}
-				x ={' '}
-				{answer.map((element, index) => {
-					if (index == answer.length - 1) return `${element}`;
-					return `${element}, `;
-				})}
-			</p>
-
-			<p className="text-center">number of iteration is {numberOfIteration}</p>
 		</div>
 	);
 }
