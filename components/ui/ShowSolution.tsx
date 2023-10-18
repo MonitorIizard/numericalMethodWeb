@@ -3,18 +3,17 @@ import { InlineMath } from "react-katex";
 
 type Props = {
   answer : number;
-  text? : string;
+  isSolution? : boolean;
 }
 
-export default function Page ({answer, text} : Props ) {
+export default function Page ({answer, isSolution} : Props ) {
   return (
     <Card>
       <div className="py-8 flex justify-center">
         {
-        text != '' ?
+        isSolution ?
         <span>
-          <InlineMath>{`Solution = `}</InlineMath>
-          <p>{text}</p>
+          <InlineMath>{`Solution = NULL`}</InlineMath>
         </span>:
         <InlineMath>{`Solution = ${answer}`}</InlineMath>
         }

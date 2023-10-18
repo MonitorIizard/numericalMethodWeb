@@ -1,4 +1,4 @@
-import RootOfEquation from '../Class/RootOfEquation';
+import OnePointIteration from '../Class/OnePointIteration';
 import { Button, Card, Modal, TextField } from '@mui/material';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { useEffect, useRef, useState } from 'react';
@@ -14,63 +14,6 @@ import PlotGraph from '@/pages/Graph';
 import ModalEdit from '@/components/ui/Modal';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-
-interface ConstructorInterface {
-	xStart: number;
-	tolerance: number;
-	fx: string;
-}
-
-class OnePointIteration extends RootOfEquation {
-	fx: string;
-
-	constructor({ xStart = 0, tolerance = 0, fx = ' ' }: ConstructorInterface) {
-		super(xStart, 0, tolerance);
-		this.fx = fx;
-	}
-
-	f(x: number): any {
-		return evaluate(this.fx, { x });
-	}
-
-	solve() {
-		let xNew;
-		let i = 0;
-		let result : SetOfResult[] = [];
-		let xOld = this.xStart;
-		let es = this.es;
-
-		while (i < 1000) {
-			xNew = this.f(xOld);
-			let tol = Math.abs((xNew - xOld) / xNew) * 100;
-			result.push(new SetOfResult(i, xNew, tol));
-			xOld = xNew;
-
-			if (tol < es) {
-				break;
-			}
-
-			i++;
-		}
-		return result;
-	}
-
-	getXStart() {
-		return this.xStart;
-	}
-
-	setXstart(xStart:number) {
-		this.xStart = xStart;
-	}
-
-	setFx(fx:string) {
-		this.fx = fx;
-	}
-
-	setTolerance(tol:number) {
-		this.es = tol;
-	}
-}
 
 const columns: Column[] = [
 	{ id: 'iterationNo', label: 'Iteration No.' },
@@ -188,6 +131,7 @@ function page() {
 			return;
 		}
 		setViewBox([viewBox[0] / 10, viewBox[1] / 10]);
+		//console.log( viewBox[0], viewBox[1] );
 	}
 
 	const zoomOut = () => {
@@ -352,7 +296,7 @@ function page() {
 								\\end{align}`}</BlockMath>
 				</Card>
 
-				<ShowSolution answer={answer} text={answer <= -5000 || answer >= 5000 ? "solution not found": ""} />
+				<ShowSolution answer={answer} isSolution={answer <= -5000 || answer >= 5000 ? false : true} />
 
 				<div className='relative'>
 					<PlotGraph equation={[equation, "x"]} step={step} domain={viewBox} range={viewBox} point={point} />
