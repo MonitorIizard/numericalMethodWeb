@@ -12,6 +12,8 @@ import StickyHeadTable from '@/components/ui/DataTable';
 import ShowSolution from '@/components/ui/ShowSolution';
 import PlotGraph from '@/pages/Graph';
 import ModalEdit from '@/components/ui/Modal';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 interface ConstructorInterface {
 	xStart: number;
@@ -93,6 +95,7 @@ function page() {
 		header: 'header',
 		description: 'description'
 	});
+	const [viewBox, setViewBox] = useState<number[]>([-10, 10]);
 
 	let onePointIterationSolver = new OnePointIteration({
 		xStart: 0,
@@ -177,24 +180,24 @@ function page() {
 		setEquation(inputEquation);
 		setxStart(+inputxStart);
 		setErrorTol(+inputErrorTol);
+	}
 
-		// //console.log(xStart, equation, errorTol);
+	const zoomIn = () => {
+		console.log( viewBox[0] );
+		if ( viewBox[0] >= -10) {
+			return;
+		}
+		setViewBox([viewBox[0] / 10, viewBox[1] / 10]);
+	}
 
-		// let resultOfSolve = onePointIterationSolver.solve();
-		// let answer = resultOfSolve[resultOfSolve.length - 1].root;
-		// // setResult(resultOfSolve);
-		// console.log(resultOfSolve);
-		// //setResult(resultOfSolve);
-		// setAnswer(answer);
-		// setPoint({x : answer, y : onePointIterationSolver.f(answer)});
-
-		// setStep((1000) / 10);
-		// setDomain([-(1000 / 2), (1000/ 2)]);
-		// setRange([-(1000 / 2), +(1000 / 2)]);
+	const zoomOut = () => {
+		if ( viewBox[0] <= -10000) {
+			return;
+		}
+		setViewBox([viewBox[0] * 10, viewBox[1] * 10]);
 	}
 
 	const count = useRef(0);
-
 	useEffect(() => {
     if ( count.current > 1 && process.env.NODE_ENV === "development" ||
 				 count.current > 0 && process.env.NODE_ENV === "production") {
@@ -210,12 +213,30 @@ function page() {
 		  setAnswer(answer);
 		  setPoint({x : answer, y : onePointIterationSolver.f(answer)});
 
-		setStep((1000) / 10);
-		setDomain([-(1000 / 2), (1000/ 2)]);
-		setRange([-(1000 / 2), +(1000 / 2)]);
+			console.log( point, equation);
+
+			setStep((1000) / 10);
+			setDomain([-(1000 / 2), (1000/ 2)]);
+			setViewBox([-(1000 / 2), (1000/ 2)]);
+			setRange([-(1000 / 2), +(1000 / 2)]);
     }
     count.current++;
 	}, [equation, errorTol, xStart])
+
+	const count1 = useRef(0);
+	useEffect(() => {
+		if ( count1.current > 1 && process.env.NODE_ENV === "development" ||
+				 count1.current > 0 && process.env.NODE_ENV === "production") {
+			if ( step <= 1000 && step >= 0.01) 
+				{
+					setStep((Math.abs((viewBox[0] / 10))) ? (Math.abs((viewBox[0] / 10))) : 1000 / 10);
+				}
+			console.log(step);
+		}
+		count1.current++;
+	}, [viewBox])
+
+	// console.log(step);
 
 	return (
 		<div
@@ -333,7 +354,13 @@ function page() {
 
 				<ShowSolution answer={answer} text={answer <= -5000 || answer >= 5000 ? "solution not found": ""} />
 
-				<PlotGraph equation={[equation, "x"]} step={step} domain={domain} range={range} point={point} />
+				<div className='relative'>
+					<PlotGraph equation={[equation, "x"]} step={step} domain={viewBox} range={viewBox} point={point} />
+					<div className=' absolute top-5 right-5 flex gap-2'>
+						<Button className="bg-white hover:bg-green-100" onClick={zoomIn} variant="contained"><AddIcon className='fill-black'/></Button>
+						<Button className="bg-white hover:bg-green-100" onClick={zoomOut} variant="contained"><RemoveIcon className='fill-black'/></Button>
+					</div>
+				</div>
 
 				<ModalEdit open={open} setOpen={setOpen} modalContent={modalContent} />
 			</div>

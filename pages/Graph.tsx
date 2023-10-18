@@ -28,11 +28,11 @@ function PlotGraph({ step, domain, range, equation, point }: PlotEquation) {
 				>
 					<Coordinates.Cartesian
 						xAxis={{
-							lines: 1,
+							lines: step,
 							labels: (n) => (n % step == 0 ? n : '')
 						}}
 						yAxis={{
-							lines: 1,
+							lines: step,
 							labels: (n) => (n % step == 0 ? n : '')
 						}}
 					/>
