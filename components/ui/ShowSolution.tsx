@@ -13,7 +13,7 @@ export default function Page ({answer, isSolution} : Props ) {
         {
         !isSolution ?
         <span>
-          <InlineMath>{`Solution = NULL`}</InlineMath>
+          <InlineMath>{`Solution = \\text{not found}`}</InlineMath>
         </span>:
         <InlineMath>{`Solution = ${answer}`}</InlineMath>
         }

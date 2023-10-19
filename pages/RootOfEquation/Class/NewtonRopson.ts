@@ -20,12 +20,12 @@ class NewptonRophson extends RootOfEquation {
 	}
 
 	solve() {
-		let x = 3; //* initial start
+		let x = this.xStart; //* initial start
 		let i = 0; //* iterative
-		let es = 0.001; //* stopping critetion tolerance
+		let es = this.es; //* stopping critetion tolerance
 		let result : SetOfResult[] = []; //* records of each iteration
 
-		while (true && i <= 100) {
+		while (true && i <= 1000) {
 			let xOld = x;
 			let deltaX = -this.f(x) / this.fd(x);
 			x = xOld + deltaX;
