@@ -11,7 +11,7 @@ export default function Page ({answer, isSolution} : Props ) {
     <Card>
       <div className="py-8 flex justify-center">
         {
-        isSolution ?
+        !isSolution ?
         <span>
           <InlineMath>{`Solution = NULL`}</InlineMath>
         </span>:
