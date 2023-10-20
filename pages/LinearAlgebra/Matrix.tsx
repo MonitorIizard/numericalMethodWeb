@@ -186,7 +186,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 												size="medium"
 												fullWidth
 												disabled
-												value={ result.length == 0 || result[i] == null ? `x${i}` : result[i]}
+												value={ result.length == 0 || result[i] == null || result.includes(NaN) ? `x${i}` : result[i]}
 												onChange={handleChange}
 											/>
 										</div>
@@ -234,7 +234,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 
 				<div className={`${solutionClass}`}>
 					<Card>
-						<ShowSolution results={result} isSolution={result.length == 0 ? false : true}/>
+						<ShowSolution results={result} isSolution={result.length == 0 || result.includes(NaN)? false : true}/>
 					</Card>
 				</div>
 			</div>
