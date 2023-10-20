@@ -27,6 +27,10 @@ html {
 	background-color : rgb(220 252 231);
 }
 
+html h1 {
+	color: black;
+}
+
 #__next {
 	background-color : rgb(220 252 231);
 }
