@@ -1,5 +1,5 @@
 import { Button, Card, TextField } from '@mui/material';
-import { ChangeEvent, SyntheticEvent, useState } from 'react';
+import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
@@ -20,6 +20,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 		[0, 0],
 		[0, 0]
 	]);
+	const [solutionClass, setSolutionClass] = useState<string>("invisible");
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -86,6 +87,8 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 			} else {
 				newMatrix.splice(value);
 			}
+			
+			console.log( newMatrix );
 
 			return newMatrix;
 		});
@@ -93,6 +96,8 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 
 	function handleSubmit(e: SyntheticEvent) {
 		e.preventDefault();
+
+		setSolutionClass("visible")
 
 		const Ax = ax.map((row) => row.map(Number));
 		const B = matrixB.map(Number);
@@ -181,7 +186,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 												size="medium"
 												fullWidth
 												disabled
-												value={ result.length == 0? `x${i}` : result[i]}
+												value={ result.length == 0 || result[i] == null ? `x${i}` : result[i]}
 												onChange={handleChange}
 											/>
 										</div>
@@ -227,9 +232,11 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 					</Card>
 				</form>
 
-				<Card>
-					<ShowSolution results={result} isSolution={result.length == 0 ? false : true}/>
-				</Card>
+				<div className={`${solutionClass}`}>
+					<Card>
+						<ShowSolution results={result} isSolution={result.length == 0 ? false : true}/>
+					</Card>
+				</div>
 			</div>
 		</>
 	);
