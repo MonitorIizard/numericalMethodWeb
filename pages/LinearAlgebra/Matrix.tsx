@@ -14,11 +14,11 @@ type Props = {
 function Matrix({ solver, iterator }: Readonly<Props>) {
 	const [dimension, setDimension] = useState<number>(2);
 	const [result, setResult] = useState<number[]>([]);
-	const [matrixB, setMatrixB] = useState<number[]>([0, 0]);
+	const [matrixB, setMatrixB] = useState<number[]>([2, 5]);
 	const [matrixX, setMatrixX] = useState<number[]>([]);
 	const [ax, setAx] = useState<number[][]>([
-		[0, 0],
-		[0, 0]
+		[0, 4],
+		[2, 5]
 	]);
 	const [solutionClass, setSolutionClass] = useState<string>("invisible");
 
