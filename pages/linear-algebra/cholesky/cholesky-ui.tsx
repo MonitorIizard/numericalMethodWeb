@@ -3,19 +3,15 @@ import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
-import ShowSolution from '../../components/ui/ShowSolutionMatrix';
-import Record from './class/Record';
-import OutputTable from './OutputTable';
+import ShowSolution from '../../../components/ui/ShowSolutionMatrix';
 
 type Props = {
 	solver?: (Ax: number[][], B: number[]) => number[];
-	iterator?: (Ax: number[][], B: number[]) => Record[];
 };
 
-function Matrix({ solver, iterator }: Readonly<Props>) {
+function Matrix({ solver }: Readonly<Props>) {
 	const [dimension, setDimension] = useState<number>(2);
 	const [result, setResult] = useState<number[]>([]);
-	const [resultOfIteration, setResultOfIteration] = useState<Record[]>([]);
 	const [matrixB, setMatrixB] = useState<number[]>([2, 2]);
 	const [matrixX, setMatrixX] = useState<number[]>([]);
 	const [ax, setAx] = useState<number[][]>([
@@ -23,12 +19,6 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 		[0, 3]
 	]);
 	const [solutionClass, setSolutionClass] = useState<string>("hidden");
-	const [outputTableClass, setOutputTableClass] = useState<string>("hidden");
-	const columns = [
-		{ id: 'iterationNo', label: 'Iteration No.' },
-		{ id: 'X', label: 'X' },
-		{ id: 'tolerance', label: 'Tolerance' }
-	];
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -105,24 +95,16 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 	function handleSubmit(e: SyntheticEvent) {
 		e.preventDefault();
 
-		
 		const A = ax.map((row) => row.map(Number));
 		const B = matrixB.map(Number);
-		
-		console.log(A, B)
-		console.log( ax, B );
 		
 		if (solver) {
 			setResult(solver(A, B));
 			setMatrixX(solver(A, B));
+      console.log( solver(A, B) );
 			setSolutionClass("block")
 		}
 
-		if (iterator) {
-			setResultOfIteration(iterator(A, B));
-			console.log(iterator(A, B));
-			setOutputTableClass("block")
-		}
 	}
 
 	return (
@@ -184,8 +166,9 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 													size="medium"
 													fullWidth
 													required
+                          disabled={j < i}
 													type="number"
-													value={ax[i][j]}
+													value={ax[j][i] = ax[i][j]}
 													onChange={handleChange}
 												/>
 											</div>
@@ -253,17 +236,6 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 					</div>
 				</div>
 
-				<div className={iterator ? "visible" : "invisible"}>
-					<div className={`${outputTableClass}`}>
-						<div className='my-4 py-4'>
-								<ShowSolution results={resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => record.value )} isSolution={resultOfIteration.length == 0 || resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => record.value ).includes(NaN) ? false : true}/>
-						</div>
-
-						<Card>
-									<OutputTable result={resultOfIteration}/>
-						</Card>
-					</div>
-				</div>
 
 			</div>
 		</>

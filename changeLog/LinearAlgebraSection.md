@@ -2,10 +2,10 @@
 - [x] implement Crammer Rule
 - [x] implement Gauss Elimination
 - [x] implement Gauss Jordan
-- [ ] implement LU decomposition
-- [ ] implement Matrix Inversion
+- [x] implement LU decomposition
+- [x] implement Matrix Inversion
 - [ ] implement Cholesky
-- [ ] implemnt jacobi
+- [x] implemnt jacobi
 - [ ] implement Gauss Seidel
 - [ ] implement Conjugate Gradient 
 
@@ -20,5 +20,8 @@
   
 - Implement Jacobi
 - [ ] Add tolerance field input
-- [ ] Table of result
+- [x] Table of result
 
+- Impleplement Cholesky
+- create new ui,input field is sysmestic
+- [ ] implement Cholesky function

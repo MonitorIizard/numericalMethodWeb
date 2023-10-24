@@ -311,6 +311,63 @@ class Matrix {
     return result;
   }
 
+  public static cholesky( matrixA : number[][], matrixB : number[] ) {
+
+    const n = matrixA.length;
+
+    const L: number[][] = new Array(n).fill(0).map(() => new Array(n).fill(0));
+
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+
+      for (let k = 0; k < i; k++) {
+        sum += Math.pow(L[i][k], 2);
+      }
+
+      L[i][i] = Math.sqrt(matrixA[i][i] - sum);
+
+      for (let j = i + 1; j < n; j++) {
+        let sum = 0;
+
+        for (let k = 0; k < i; k++) {
+          sum += L[i][k] * L[j][k];
+        }
+
+        L[j][i] = (matrixA[j][i] - sum) / L[i][i];
+      }
+    }
+
+    console.log(L);
+
+    const y: number[] = new Array(n);
+
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+
+      for (let j = 0; j < i; j++) {
+        sum += L[i][j] * y[j];
+      }
+
+      y[i] = (matrixB[i] - sum) / L[i][i];
+    }
+
+    const x: number[] = new Array(n);
+
+    for (let i = n - 1; i >= 0; i--) {
+      let sum = 0;
+
+      for (let j = i + 1; j < n; j++) {
+        sum += L[j][i] * x[j];
+      }
+
+      x[i] = (y[i] - sum) / L[i][i];
+    }
+
+    console.log(x);
+
+    return x;
+  }
+
   public static gaussSeidelIteration(matrixA : number[][], matrixB : number[]) : number[] {
     let result : number[] = [];
 

@@ -9,10 +9,14 @@ type Props = {
 export default function Page ({results, isSolution} : Props ) {
   return (
     <Card>
-      <div className="py-8 flex justify-center">
+      <div className="flex justify-center py-4">
         {
         isSolution ?
         <div>
+          <div className="text-center">
+            <InlineMath>Solution</InlineMath>
+          </div>
+          <br />
           { results.map( (ans, idx) => {
             return (
               <span key={idx}>
