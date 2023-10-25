@@ -9,7 +9,7 @@ import OutputTable from './OutputTable';
 
 type Props = {
 	solver?: (Ax: number[][], B: number[]) => number[];
-	iterator?: (Ax: number[][], B: number[]) => Record[];
+	iterator?: (Ax: number[][], B: number[], errorTol : number) => Record[];
 };
 
 function Matrix({ solver, iterator }: Readonly<Props>) {
@@ -24,11 +24,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 	]);
 	const [solutionClass, setSolutionClass] = useState<string>("hidden");
 	const [outputTableClass, setOutputTableClass] = useState<string>("hidden");
-	const columns = [
-		{ id: 'iterationNo', label: 'Iteration No.' },
-		{ id: 'X', label: 'X' },
-		{ id: 'tolerance', label: 'Tolerance' }
-	];
+	const [tolError, setTolError] = useState<number>(0.0001);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -119,8 +115,9 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 		}
 
 		if (iterator) {
-			setResultOfIteration(iterator(A, B));
-			console.log(iterator(A, B));
+			setResultOfIteration(iterator(A, B, tolError));
+			console.log(`tolError = ${tolError})`);
+			console.log(iterator(A, B, tolError));
 			setOutputTableClass("block")
 		}
 	}

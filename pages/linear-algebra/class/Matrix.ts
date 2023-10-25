@@ -1,5 +1,5 @@
 import SetOfResult from "@/pages/RootOfEquation/Class/SetOfResult";
-import math, {abs, det} from "mathjs";
+import math, {abs, det, re} from "mathjs";
 import Record from "@/pages/linear-algebra/class/Record"
 
 class Matrix { 
@@ -254,12 +254,12 @@ class Matrix {
     return result;
   }
 
-  public static jacobiIteration(matrixA : number[][], matrixB : number[]) {
+  public static jacobiIteration(matrixA : number[][], matrixB : number[], errorTol : number) {
     let A = [...matrixA];
     let B = [...matrixB];
     let X = Array.from( {length : matrixA.length}, () => 0);
     let Xold = Array.from( {length : matrixA.length}, () => 0);
-    let tolerance = 0.001;
+    let tolerance = errorTol;
     let n = A.length;
     let result : Record[] = Array.from( {length : n}, (_,idx) => new Record(0,`x${idx}`, 0, 0));
 
@@ -369,13 +369,14 @@ class Matrix {
     return x;
   }
 
-  public static gaussSeidelIteration(matrixA : number[][], matrixB : number[]) : Record[] {
+  public static gaussSeidelIteration(matrixA : number[][], matrixB : number[], errorTol : number) : Record[] {
     let n = matrixA.length;
     let result : Record[] = Array.from( {length : n}, (_, idx) => new Record(0, `x${idx}`, 0, 0));
     let A = [...matrixA];
     let B = [...matrixB];
     let X = Array.from({length : n}, () => 0);
     let Xold = Array.from({length : n}, () => 0);
+    let tol = errorTol;
 
     function calError ( x : number, oldX : number ) {
       return Math.abs( (x - oldX) / x ) * 100;
@@ -395,7 +396,6 @@ class Matrix {
           if( i == j ) continue;
           
           sum -= (A[j][i] * X[i]);
-          
         }
         
         sum /= A[j][j];
@@ -405,11 +405,11 @@ class Matrix {
       }
 
       for ( let j = 0; j < n; j++) {
-        if ( calError( X[j], Xold[j]) < 0.001 && j == n - 1) {
+        if ( calError( X[j], Xold[j]) < tol && j == n - 1) {
           return result;
         }
 
-        if ( calError( X[j], Xold[j]) < 0.001 ) {
+        if ( calError( X[j], Xold[j]) < tol ) {
           continue;
         } else {
           break;
@@ -423,8 +423,107 @@ class Matrix {
     return result;
   }
 
-  public static conjugateGradient(matrixA : number[][], matrixB : number[]) : number[] {
-    let result : number[] = [];
+  public static conjugateGradient(matrixA : number[][], matrixB : number[], errorTol : number) : Record[] {
+    let result : Record[] = [];
+    let A = [...matrixA];
+    let B = [...matrixB];
+    let n = A.length;
+    let D = Array.from( {length : n}, () => 0);
+    let X = Array.from( {length : n}, () => 0);
+    let R = Array.from( {length : n}, () => 0);
+    let tol = errorTol;
+
+    //Step1
+    //Initialize R0 and D0
+    for ( let i = 0; i < n; i++ ) {
+      let sum = 0;
+      for ( let j = 0; j < n; j++ ) {
+        sum += A[i][j] * X[j];
+      }
+      R[i] = sum - B[i];
+      D[i] = R[i] * -1;
+    }
+
+    //Step2
+    //WHile Loops
+    let lambda;
+    let i = 1;
+
+    while ( i < 10 ) {
+      lambda = 0;
+      // Lambda = - ([D]k * {R}k) /[D]k * [A] * [D]k
+      for ( let k = 0; k < D.length; k++ ) {
+        lambda += D[k] * R[k];
+      }
+
+      let tempSum = 0;
+      for ( let k = 0; k < n; k++ ) {
+        let sum = 0;
+
+        for ( let j = 0; j < A[k].length; j++ ) {
+          sum += A[j][k] * D[j];
+        }
+        sum *= D[k];
+        tempSum += sum;
+      }
+
+      lambda /= ( -1 * tempSum);
+
+      // {X}k+1 = [X]k + lambda * [D]k
+      for ( let k = 0; k < X.length; k++ ) {
+        X[k] = X[k] + lambda * D[k];
+      }
+      
+      // find residual, {R}k+1 = [A]{X}k+1 + [B]
+      for ( let k = 0; k < n; k++ ) {
+        let sum = 0;
+        for ( let j = 0; j < A[k].length; j++ ) {
+          sum += A[j][k] * X[j];
+        }
+        
+        R[k] = sum - B[k];
+      }
+      
+      // find Error 
+      let error = 0;
+      let sum = 0;
+      for ( let k = 0; k < R.length; k++ ) {
+        sum += R[k] * R[k];
+      }
+      error = Math.sqrt(sum);
+
+      for (let k = 0; k < X.length; k++) {
+        result.push( new Record(i, `x${k}`, X[k], error));
+      }
+      
+      if ( error < tol ) {
+        return result;
+      }
+
+      // Find Alpha
+      let numeratorTemp = 0;
+      let denominatorTemp = 0;
+      for ( let k = 0; k < n; k++ ) {
+        let numerator = 0;
+        let denominator = 0;
+        for ( let j = 0; j < A[k].length; j++ ) {
+          numerator += R[j] * A[j][k];
+          denominator += D[j] * A[j][k] ;
+        }
+        denominator *= D[k]; 
+        denominatorTemp += denominator;
+        numerator *= D[k];
+        numeratorTemp += numerator;
+      }
+      let alpha = numeratorTemp / denominatorTemp;
+
+      // Set new D[k]
+      for ( let k = 0; k < D.length; k++ ) {
+        D[k] = (-1 * R[k]) + alpha * D[k];
+      }
+
+      i++;
+    }
 
     return result;
   }

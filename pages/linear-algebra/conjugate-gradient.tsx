@@ -1,11 +1,11 @@
-import Matrix from "../class/Matrix";
-import MatrixUi from "../Matrix";
+import Matrix from "./class/Matrix";
+import MatrixUi from "./Matrix";
 
 function Page() {
   return (
     <>
       <h1 className="my-8 text-center text-3xl font-bold">Conjugate Gradient</h1>
-      <MatrixUi solver={Matrix.conjugateGradient} />
+      <MatrixUi iterator={Matrix.conjugateGradient} />
     </>
   )
 }
