@@ -29,3 +29,4 @@
 ### 25-10-2023
 - Implement Gauss Seidel
 - Gauss Seidel : input matrix must be sysmetric and positive definite
+- [ ] do Contour Graph

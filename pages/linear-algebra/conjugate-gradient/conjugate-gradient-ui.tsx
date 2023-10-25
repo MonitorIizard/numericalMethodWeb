@@ -4,21 +4,25 @@ import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
 import ShowSolution from '../../../components/ui/ShowSolutionMatrix';
+import Record from '../class/Record';
+import OutputTable from '../OutputTable';
 
 type Props = {
-	solver?: (Ax: number[][], B: number[]) => number[];
+	iterator?: (Ax: number[][], B: number[], errorTol : number) => Record[];
 };
 
-function Matrix({ solver }: Readonly<Props>) {
+function Matrix({ iterator }: Readonly<Props>) {
 	const [dimension, setDimension] = useState<number>(2);
 	const [result, setResult] = useState<number[]>([]);
+	const [resultOfIteration, setResultOfIteration] = useState<Record[]>([]);
 	const [matrixB, setMatrixB] = useState<number[]>([2, 2]);
 	const [matrixX, setMatrixX] = useState<number[]>([]);
 	const [ax, setAx] = useState<number[][]>([
 		[2, -4],
 		[0, 3]
 	]);
-	const [solutionClass, setSolutionClass] = useState<string>("hidden");
+	const [outputTableClass, setOutputTableClass] = useState<string>("hidden");
+	const [tolError, setTolError] = useState<number>(0.0001);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -42,6 +46,10 @@ function Matrix({ solver }: Readonly<Props>) {
 				next[i][j] = Number(value);
 				return next;
 			});
+		}
+
+		if (name.includes('ErrorCriteria')) {
+			setTolError(Number(value));
 		}
 	}
 
@@ -97,15 +105,12 @@ function Matrix({ solver }: Readonly<Props>) {
 
 		const A = ax.map((row) => row.map(Number));
 		const B = matrixB.map(Number);
-		
-		if (solver) {
-			setResult(solver(A, B));
-			setMatrixX(solver(A, B));
-      console.log( solver(A, B) );
 
-			setSolutionClass("block")
+		if (iterator) {
+			setResultOfIteration(iterator(A, B, tolError));
+      console.log( tolError );
+			setOutputTableClass("block")
 		}
-
 	}
 
 	return (
@@ -166,8 +171,7 @@ function Matrix({ solver }: Readonly<Props>) {
 													name={`A${i}${j}`}
 													size="medium"
 													fullWidth
-													required
-                          disabled={j < i}
+													disabled={j < i}
 													type="number"
 													value={ax[j][i] = ax[i][j]}
 													onChange={handleChange}
@@ -214,6 +218,23 @@ function Matrix({ solver }: Readonly<Props>) {
 							</div>
 						</div>
 
+						{
+							iterator && 
+							<div>
+								<TextField
+											id="outlined-basic"
+											label={`Error Criteria`}
+											variant="outlined"
+											name={`ErrorCriteria`}
+											size="medium"
+											fullWidth
+											required
+											type="number"
+											onChange={handleChange}
+										/>
+							</div>
+						}
+
 						<Button
 							variant="contained"
 							type="submit"
@@ -229,14 +250,17 @@ function Matrix({ solver }: Readonly<Props>) {
 					</Card>
 				</form>
 
-				<div className={solver ? "visible" : "invisible"}>
-					<div className={`${solutionClass}`}>
+				<div className={iterator ? "visible" : "invisible"}>
+					<div className={`${outputTableClass}`}>
+						<div className='my-4 py-4'>
+								<ShowSolution results={resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => record.value )} isSolution={resultOfIteration.length == 0 || resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => record.value ).includes(NaN) ? false : true}/>
+						</div>
+
 						<Card>
-							<ShowSolution results={result} isSolution={result.length == 0 || result.includes(NaN)? false : true}/>
+									<OutputTable result={resultOfIteration}/>
 						</Card>
 					</div>
 				</div>
-
 
 			</div>
 		</>

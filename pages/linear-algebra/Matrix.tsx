@@ -49,6 +49,10 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 				return next;
 			});
 		}
+
+		if (name.includes('ErrorCriteria')) {
+			setTolError(Number(value));
+		}
 	}
 
 	function resize(value: number) {
@@ -101,12 +105,8 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 	function handleSubmit(e: SyntheticEvent) {
 		e.preventDefault();
 
-		
 		const A = ax.map((row) => row.map(Number));
 		const B = matrixB.map(Number);
-		
-		console.log(A, B)
-		console.log( ax, B );
 		
 		if (solver) {
 			setResult(solver(A, B));
@@ -116,8 +116,6 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 
 		if (iterator) {
 			setResultOfIteration(iterator(A, B, tolError));
-			console.log(`tolError = ${tolError})`);
-			console.log(iterator(A, B, tolError));
 			setOutputTableClass("block")
 		}
 	}
@@ -226,6 +224,23 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 								))}
 							</div>
 						</div>
+
+						{
+							iterator && 
+							<div>
+								<TextField
+											id="outlined-basic"
+											label={`Error Criteria`}
+											variant="outlined"
+											name={`ErrorCriteria`}
+											size="medium"
+											fullWidth
+											required
+											type="number"
+											onChange={handleChange}
+										/>
+							</div>
+						}
 
 						<Button
 							variant="contained"

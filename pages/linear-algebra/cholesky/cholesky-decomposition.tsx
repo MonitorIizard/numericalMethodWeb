@@ -1,11 +1,10 @@
-import Matrix from "./class/Matrix";
-import MatrixUi from "./Matrix";
+import Matrix from "../class/Matrix";
 import Typography from '@mui/material/Typography';
 import { Button, Modal} from '@mui/material';
 import Box from '@mui/material/Box';
 import { useState } from "react";
 import { BlockMath, InlineMath } from 'react-katex';
-import CholeskyUi from "./cholesky/cholesky-ui";
+import CholeskyUi from "./cholesky-ui";
 
 function Page() {
   const [openNotify, setOpenNotify] = useState<boolean>(true);
