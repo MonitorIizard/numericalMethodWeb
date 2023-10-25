@@ -4,10 +4,10 @@
 - [x] implement Gauss Jordan
 - [x] implement LU decomposition
 - [x] implement Matrix Inversion
-- [ ] implement Cholesky
+- [x] implement Cholesky
 - [x] implemnt jacobi
-- [ ] implement Gauss Seidel
-- [ ] implement Conjugate Gradient 
+- [x] implement Gauss Seidel
+- [x] implement Conjugate Gradient 
 
 
 ### 23-10-2023

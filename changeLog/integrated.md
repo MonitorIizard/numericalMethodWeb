@@ -1,0 +1,3 @@
+**Task**
+- [ ] Trapezoidal
+- [ ] Simpson's

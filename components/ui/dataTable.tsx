@@ -7,8 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import SetOfResult from '@/pages/RootOfEquation/Class/SetOfResult';
-import Column from '@/pages/RootOfEquation/Class/Column';
+import SetOfResult from '@/pages/root-of-equation/Class/SetOfResult';
+import Column from '@/pages/root-of-equation/Class/Column';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 
