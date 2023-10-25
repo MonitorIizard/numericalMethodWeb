@@ -6,6 +6,7 @@ class Matrix {
   public static crammerRule(matrixA : number[][], matrixB : number[]) {
     let result : number[] = [];
     let detA = 1;
+    let n = matrixA.length;
 
     try {
       detA = det( matrixA );
@@ -17,7 +18,7 @@ class Matrix {
       return result;
     }
 
-    for ( let i = 0; i < matrixA.length; i++ ) {
+    for ( let i = 0; i < n; i++ ) {
       const detAx = det( matrixA.map((row, idx) => 
                               row.map((_, jdx) => 
                               (jdx === i ? matrixB[idx] : row[jdx]))))
@@ -61,11 +62,11 @@ class Matrix {
   }
 
   public static gaussElimination(matrixA : number[][], matrixB : number[]) {
-    const result : number[] = Array.from( {length : matrixA.length}, () => 0);
+    const n = matrixA.length;
+    const result : number[] = Array.from( {length : n}, () => 0);
     let A = [...matrixA]; 
     let B = [...matrixB];
 
-    const n = matrixA.length;
 
     for( let i = 0; i < n; i++) {
       // console.log( `iteration = ${i}` );
@@ -368,8 +369,56 @@ class Matrix {
     return x;
   }
 
-  public static gaussSeidelIteration(matrixA : number[][], matrixB : number[]) : number[] {
-    let result : number[] = [];
+  public static gaussSeidelIteration(matrixA : number[][], matrixB : number[]) : Record[] {
+    let n = matrixA.length;
+    let result : Record[] = Array.from( {length : n}, (_, idx) => new Record(0, `x${idx}`, 0, 0));
+    let A = [...matrixA];
+    let B = [...matrixB];
+    let X = Array.from({length : n}, () => 0);
+    let Xold = Array.from({length : n}, () => 0);
+
+    function calError ( x : number, oldX : number ) {
+      return Math.abs( (x - oldX) / x ) * 100;
+    }
+
+    let f = 1;
+
+    while ( f < 1000 ) {
+      for( let i = 0; i < Xold.length; i++ ) {
+        Xold[i] = X[i];
+      }
+    
+      for ( let j = 0; j < n; j++ ) {
+        let sum = B[j];
+        
+        for ( let i = 0; i < n; i++ ) {
+          if( i == j ) continue;
+          
+          sum -= (A[j][i] * X[i]);
+          
+        }
+        
+        sum /= A[j][j];
+        
+        X[j] = sum;
+        result.push( new Record(f, `x${f}`, X[j], calError(X[j], Xold[j])) );
+      }
+
+      for ( let j = 0; j < n; j++) {
+        if ( calError( X[j], Xold[j]) < 0.001 && j == n - 1) {
+          return result;
+        }
+
+        if ( calError( X[j], Xold[j]) < 0.001 ) {
+          continue;
+        } else {
+          break;
+        }
+      }
+
+      f++;
+    }
+
 
     return result;
   }

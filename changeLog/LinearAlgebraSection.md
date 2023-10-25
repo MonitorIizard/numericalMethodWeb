@@ -25,3 +25,6 @@
 - Impleplement Cholesky
 - create new ui,input field is sysmestic
 - [ ] implement Cholesky function
+
+### 25-10-2023
+- Implement Gauss Seidel
