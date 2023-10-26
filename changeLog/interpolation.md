@@ -22,7 +22,7 @@ plotly cannot find self : https://github.com/plotly/react-plotly.js/issues/272
 have to do dynamic import
 
 ### 26-10-66
-Implement Graph
+**Implement Graph**
 - I want to send props to graph component but the question is which data should I send.
 - `Grap componet` I plan to display the graph and points of given data.
 - Graph come from calculate a plently of points of (x. y) from function.
@@ -40,3 +40,6 @@ Implement X to find input : receive and read data
 Found bug about can't access object because type of setInputData function in input component have a same variable
 
 **but I dont know wtf is happen. It just work.**
+
+#### Implement Largrange
+- [ ] need to ascending grap point

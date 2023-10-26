@@ -18,7 +18,7 @@ type Props = {
 
 
 export default function Input( {setInputData} : Props) {
-  let givenData = [ new Point([0], 9.81), new Point([20_000], 9.7487), new Point ( [40_000], 9.6879), new Point ( [60_000], 9.6879),  new Point ( [80000], 9.5682) ];
+  let givenData = [ new Point([0], 0), new Point([5], 3), new Point ( [10], 10), new Point ( [60_000], 9.6879),  new Point ( [80000], 9.5682) ];
   const [numberOfPoint, setNumberOfPoint] = useState<number>(5);
   const [data, setData] = useState<Data[]>(givenData.map((element, index) => new Data(false, element)));
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);

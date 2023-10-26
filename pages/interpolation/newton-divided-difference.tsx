@@ -17,16 +17,24 @@ export default function Page() {
   const [givenData, setGivenData] = useState<Data[]>([]);
   const [graph, setGraph] = useState<Point[]>([]);
   const [xToFind, setXToFind] = useState<number>(0);
+
   function calculateGraph( answerOfC : number[]) {
     if ( givenData.length === 0 ) return [];
 
+    const setOfx = givenData.map((data) => data.point.x[0]);
+    const setOfy = givenData.map((data) => data.point.y);
+
+    let calStep = Math.floor(Math.log(setOfx[0] - setOfx[setOfx.length - 1]) / Math.log(10));
+    calStep = Math.pow(10, calStep-1);
+
     let coordinate : Point[] = [];
-    for ( let x = givenData[0].point.x[0]; x <= givenData[givenData.length - 1].point.x[0]; x += 1) {
+    for ( let x = givenData[0].point.x[0], i = 0; x <= givenData[givenData.length - 1].point.x[0] && i < 10000; i++, x += calStep) {
       let sum = answerOfC[0];
 
       for ( let i = 1; i < answerOfC.length; i++ ) {
         let currentSumThisTerm = 1;
         let coefficient = answerOfC[i];
+        
           
         for ( let j = 0; j < i; j++ ) {
           currentSumThisTerm *= (x - givenData[j].point.x[0]);
