@@ -4,9 +4,9 @@ import Point from '@/pages/interpolation/class/Point';
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 type GraphProps = {
-  graph: Point[];
-  points: Point[];
-  answerPoint : Point;
+  graph?: Point[];
+  points?: Point[];
+  answerPoint? : Point;
 }
 
 export default function Graph({graph, points, answerPoint} : GraphProps) {
@@ -15,30 +15,30 @@ export default function Graph({graph, points, answerPoint} : GraphProps) {
        <Plot
         data={[
           {
-            x: graph.map((point) => point.x[0]),
-            y: graph.map((point) => point.y),
+            x: graph?.map((point) => point.x[0]),
+            y: graph?.map((point) => point.y),
             name: 'Graph',
             type: 'scatter',
             marker: {color: 'red'},
           },
           {
-            x : points.map((point) => point.x[0]),
-            y : points.map((point) => point.y),
+            x : points?.map((point) => point.x[0]),
+            y : points?.map((point) => point.y),
             type: 'scatter',
             mode: 'text+markers',
             name : 'Given Data',
             marker : {size : 12 },
-            text: points.map((point) => `(${point.x[0]}, ${point.y})`),
+            text: points?.map((point) => `(${point.x[0]}, ${point.y})`),
             textposition: 'top center',
           },
           {
-            x : [answerPoint.x[0]],
-            y : [answerPoint.y],
+            x : [answerPoint?.x[0] ? answerPoint?.x[0] : 0],
+            y : [answerPoint?.y? answerPoint?.y : 0],
             type: 'scatter',
             mode: 'text+markers',
             name : 'Answer',
             marker : {size : 12, color: 'green' },
-            text: [`(${answerPoint.x}, ${answerPoint.y})`],
+            text: [`(${answerPoint?.x}, ${answerPoint?.y})`],
             textposition: 'top center',
           }
         ]}

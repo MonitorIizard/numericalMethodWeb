@@ -111,7 +111,7 @@ export default function Input( {setInputData} : Props) {
                      value={xToFind}
                      onChange={(e) => onChangeHandle(e)}
                      fullWidth/>
-          <TextField className="w-28" label="Point" required fullWidth type={"number"}
+          <TextField className="w-60" label="Number of Point" required type={"number"}
                     name="numberOfPoint" value={numberOfPoint} 
                     onChange={(e) => resize(Number(e.target.value))}/>
         </div>

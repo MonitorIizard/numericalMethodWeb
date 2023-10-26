@@ -36,3 +36,7 @@ props : - point of answer
 ```
 
 Implement X to find input : receive and read data 
+
+Found bug about can't access object because type of setInputData function in input component have a same variable
+
+**but I dont know wtf is happen. It just work.**

@@ -65,7 +65,8 @@ export default function Page() {
     <div className="flex flex-col gap-6 items-center">
       <h1 className="my-8 text-center text-3xl font-bold">Newton Divided Difference</h1>
       <Input setInputData={setInputData}/>
-      <ShowSolution answer={[answer]}/>
+      <ShowSolution answer={[answer]}
+                    xToFind={xToFind}/>
       <Graph graph={graph} 
              points={givenData.map((row) => row.point)}
              answerPoint={new Point([xToFind], answer)}/>

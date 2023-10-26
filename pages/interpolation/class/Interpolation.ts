@@ -62,4 +62,22 @@ export default class Interpolation {
     return approximateX( givenData, xToFind );
   }
 
+  public static largrange(x : number[], y : number[], xToFind:number) {
+    let Llist = [];
+    let n = x.length;
+    let fx = 0;
+    for ( let i = 0; i < n; i++ ) {
+      let l = 1;
+      for ( let j = 0; j < n; j++ ) {
+    
+        if ( j == i ) continue;
+    
+        l *= (xToFind - x[j]) / ( x[i] - x[j] );
+      }
+      fx += l * y[i];
+    
+      Llist[i] = l;
+    }
+    return { fx, Llist };
+  }
 }
