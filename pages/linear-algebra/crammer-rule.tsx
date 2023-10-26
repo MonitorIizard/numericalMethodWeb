@@ -1,5 +1,5 @@
-import MatrixUI from "../Matrix";
-import Matrix from "../class/Matrix";
+import MatrixUI from "./Matrix";
+import Matrix from "./class/Matrix";
 
 function Page() {
 

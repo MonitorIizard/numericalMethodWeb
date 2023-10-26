@@ -7,23 +7,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Point from "@/pages/interpolation/class/Point";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InlineMath } from "react-katex";
 import 'katex/dist/katex.min.css';
+import Data from "@/pages/interpolation/class/Data";
 
-class Data {
-  isChecked: boolean;
-  point: Point;
-  constructor(isChecked : boolean,point: Point) {
-    this.point = point;
-    this.isChecked = isChecked;
-  }
+type Props = {
+  setInputData? : ( value : { data : Data[], target : number } ) => void;
 }
 
-export default function Input() {
-  const [numberOfPoint, setNumberOfPoint] = useState<number>(5);
-  const [data, setData] = useState<Data[]>(Array.from( {length : numberOfPoint}, (_, index) => new Data(false, new Point([NaN],NaN))));
 
+export default function Input( {setInputData} : Props) {
+  let givenData = [ new Point([0], 9.81), new Point([20_000], 9.7487), new Point ( [40_000], 9.6879), new Point ( [60_000], 9.6879),  new Point ( [80000], 9.5682) ];
+  const [numberOfPoint, setNumberOfPoint] = useState<number>(5);
+  const [data, setData] = useState<Data[]>(givenData.map((element, index) => new Data(false, element)));
+  const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
+  const [xToFind, setXToFind] = useState<number>(0);
   function resize(value: number) {
     setNumberOfPoint((prev) => {
       if ( value <= 0 ) {
@@ -46,8 +45,12 @@ export default function Input() {
 
   function onChangeHandle(e : React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
-    console.log(name[1]);
-    console.log(value);
+    // console.log(value);
+
+    if ( name.includes('Find') ) {
+      setXToFind(Number(value));
+      // console.log(name);
+    }
 
     if ( name.includes('x') ) {
       const i = Number(name[1]);
@@ -76,27 +79,37 @@ export default function Input() {
       });
     }
 
+    // setInputData && setInputData({ data : data.filter((row) => row.isChecked), xToFind});
   }
 
-  function checkAll() {
+  function markAll(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setData((prev) => {
       const next = [...prev];
       next.forEach((data) => {
-        data.isChecked = !data.isChecked;
+        data.isChecked = !isCheckAll;
       });
       return next;
     })
+
+    setIsCheckAll((prev) => !prev);
+    // setInputData && setInputData({ data : data.filter((row) => row.isChecked), xToFind});
   }
 
-  return (
-    <div>
-      <Card className="w-11/12 max-w-xl mx-auto p-4">
+  useEffect(() => { 
+    setInputData && setInputData({ data : data.filter((row) => row.isChecked), target : xToFind});
+  }, [data, xToFind]);
 
-        <div className="flex">
+  return (
+      <Card className="w-11/12 max-w-xl p-4">
+
+        <div className="flex sticky">
           <TextField className=""
                      label="X to Find f(x)"
                      type="number"
-                     name="xToFind"
+                     name="Find"
+                     required
+                     value={xToFind}
+                     onChange={(e) => onChangeHandle(e)}
                      fullWidth/>
           <TextField className="w-28" label="Point" required fullWidth type={"number"}
                     name="numberOfPoint" value={numberOfPoint} 
@@ -108,7 +121,7 @@ export default function Input() {
                 <Table aria-label="simple table">
               <TableHead>
                 <TableRow className="text-black">
-                  <TableCell size="small" align="center" className="w-10"><Checkbox onChange={checkAll}/></TableCell>
+                  <TableCell size="small" align="center" className="w-10"><Checkbox checked={isCheckAll} onChange={(e) => markAll(e)}/></TableCell>
                   <TableCell size="small" align="center"> <InlineMath> Point </InlineMath></TableCell>
                   <TableCell size="small" align="center"><InlineMath>X</InlineMath></TableCell>
                   <TableCell size="small" align="center"><InlineMath>Y</InlineMath></TableCell>
@@ -118,12 +131,12 @@ export default function Input() {
               <TableBody>
                 {
                   data.slice(0, numberOfPoint).map((row, index) => { 
-                    console.log(row);
                     return (
                     <TableRow className={row.isChecked ? "bg-slate-300 color-white" : ""}
                                 key={`row=${index}`}>
                       <TableCell size="small" align="center" className="w-10">
-                        <Checkbox onChange={(e) => onChangeHandle(e)}
+                        <Checkbox onChange={(e) => onChangeHandle(e)} 
+                                  checked={row.isChecked}
                                   name={`check${index}`}
                                   />
                       </TableCell>
@@ -133,12 +146,15 @@ export default function Input() {
                                   label={`x${index+1}`}
                                   name={`x${index}`}
                                   value={Number.isNaN(row.point.x[0]) ? "" : row.point.x[0]}
+                                  required
                                   onChange={(e) => onChangeHandle(e)}/>
                       </TableCell>
                       <TableCell size="small" align="center">
                         <TextField className=""
                                   label={`y${index+1}`}
+                                  value={Number.isNaN(row.point.y) ? "" : row.point.y}
                                   name={`y${index}`}
+                                  required
                                   onChange={(e) => onChangeHandle(e)}/>
                       </TableCell>
                     </TableRow>
@@ -151,6 +167,5 @@ export default function Input() {
           </div>
 
       </Card>
-    </div>
   )
 }

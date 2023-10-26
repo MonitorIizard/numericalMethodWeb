@@ -8,13 +8,13 @@ type Props = {
 
 export default function showSolution({answer} : Props) {
   return (
-    <Card className="w-11/12 max-w-xl mx-auto p-4 text-center">
+    <Card className="w-11/12 max-w-xl p-4 text-center">
       <InlineMath>Solution</InlineMath>
       {
         answer.map((value, index) => {
           return (
             <div key={index}>
-              <InlineMath>{`x_${index} = ${value}`}</InlineMath>
+              <InlineMath>{`y = ${value}`}</InlineMath>
             </div>
           )
         }
