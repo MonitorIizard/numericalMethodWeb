@@ -22,9 +22,8 @@ export default function Page() {
     if ( givenData.length === 0 ) return [];
 
     const setOfx = givenData.map((data) => data.point.x[0]);
-    const setOfy = givenData.map((data) => data.point.y);
-
-    let calStep = Math.floor(Math.log(setOfx[0] - setOfx[setOfx.length - 1]) / Math.log(10));
+    
+    let calStep = Math.floor(Math.log(Math.abs(setOfx[0] - setOfx[setOfx.length - 1])) / Math.log(10));
     calStep = Math.pow(10, calStep-1);
 
     let coordinate : Point[] = [];
@@ -46,6 +45,7 @@ export default function Page() {
       coordinate.push(new Point([x], sum));
     }
 
+    console.log( coordinate );
     return coordinate;
   }
 

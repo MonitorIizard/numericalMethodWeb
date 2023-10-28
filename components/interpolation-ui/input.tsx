@@ -18,11 +18,11 @@ type Props = {
 
 
 export default function Input( {setInputData} : Props) {
-  let givenData = [ new Point([0], 0), new Point([5], 3), new Point ( [10], 10), new Point ( [60_000], 9.6879),  new Point ( [80000], 9.5682) ];
-  const [numberOfPoint, setNumberOfPoint] = useState<number>(5);
+  let givenData = [ new Point([3], 2.5), new Point([4.5], 1), new Point ( [7], 2.5), new Point ( [9], 0.5)];
+  const [numberOfPoint, setNumberOfPoint] = useState<number>(4);
   const [data, setData] = useState<Data[]>(givenData.map((element, index) => new Data(false, element)));
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
-  const [xToFind, setXToFind] = useState<number>(0);
+  const [xToFind, setXToFind] = useState<number>(5);
   function resize(value: number) {
     setNumberOfPoint((prev) => {
       if ( value <= 0 ) {

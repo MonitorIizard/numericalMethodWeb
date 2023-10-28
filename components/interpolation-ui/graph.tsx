@@ -1,7 +1,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Point from '@/pages/interpolation/class/Point';
-import { Data, Datum, PlotMarker, PlotType } from 'plotly.js';
+import { Data} from 'plotly.js';
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 type GraphProps = {
@@ -10,14 +10,6 @@ type GraphProps = {
   answerPoint? : Point;
   largrangGraph? : Point[][];
 }
-
-// type DataProps = {
-//   x?: Datum[];
-//   y?: Datum[];
-//   name?: string;
-//   type?: PlotType;
-//   marker?: Partial<PlotMarker>;
-// }
 
 export default function Graph({graph, points, answerPoint, largrangGraph} : GraphProps) {
 
@@ -38,7 +30,7 @@ export default function Graph({graph, points, answerPoint, largrangGraph} : Grap
           {
             x: graph?.map((point) => point.x[0]),
             y: graph?.map((point) => point.y),
-            name: 'Largrange Graph',
+            name: 'Graph',
             mode: 'lines',
             type: 'scatter',
             marker: {color: 'red', size : 12},

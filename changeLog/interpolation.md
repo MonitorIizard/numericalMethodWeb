@@ -1,6 +1,6 @@
 **Task**
-- [ ] Newton Divided-difference
-- [ ] Largrange
+- [x] Newton Divided-difference
+- [x] Largrange
 - [ ] Spline
 - Linear 
 - Quadratic
@@ -43,3 +43,9 @@ Found bug about can't access object because type of setInputData function in inp
 
 #### Implement Largrange
 - [ ] need to ascending grap point
+- add Largrange equation
+
+**28-10-2566**
+#### Implement Spline
+- [x] create UI, 3 button to choose type of spline to utilize.
+- [ ] implement calculate method

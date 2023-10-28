@@ -7,14 +7,17 @@ class Matrix {
     let result : number[] = [];
     let detA = 1;
     let n = matrixA.length;
+    console.log(matrixA);
 
     try {
       detA = det( matrixA );
     } catch ( error ) {
+      console.log( result );
       return result;
     }
 
     if ( detA == 0 ) {
+      console.log( result );
       return result;
     }
 
@@ -25,6 +28,7 @@ class Matrix {
 
       result.push( detAx / detA );
     }
+    console.log( result );
     return result;
   }
 
@@ -32,10 +36,9 @@ class Matrix {
     let A = [...matrixA];
     let B = [...matrixB];
     let max = abs( A[ip][ip] );
-    // console.log(`max is ${max}` )
     let numofColumnThatBiggest = ip;
     let n = A.length;
-
+    
     for(let i = ip+1 ; i < n ; i++) {
       // console.log(`amax = ${abs( A[i][ip] )}`)
       if( max < abs( A[i][ip] ) ) {
@@ -43,11 +46,13 @@ class Matrix {
         numofColumnThatBiggest = i;
       }
     }
+    
+    // console.log(`max is ${max} ip = ${ip} numOfBiggestColumn = ${numofColumnThatBiggest}` );
 
     if ( numofColumnThatBiggest > ip ) {
       let temp = [...A[ip]];
-      // console.log("temp is")
-      // console.log(temp);
+      console.log("temp is")
+      console.log(temp);
       A[ip] = [...A[numofColumnThatBiggest]];
       A[numofColumnThatBiggest] = [...temp];
 
@@ -56,7 +61,8 @@ class Matrix {
       B[numofColumnThatBiggest] = tempB;
     }
 
-    // console.log(A);
+
+    console.log(A);
 
     return {A, B};
   }
@@ -67,22 +73,33 @@ class Matrix {
     let A = [...matrixA]; 
     let B = [...matrixB];
 
+    console.log(A);
+// 0  [4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+// 1  [0, 0, 16, 4, 1, 0, 0, 0, 0, 0, 0]
+// 2  [0, 0, 36, 6, 1, 0, 0, 0, 0, 0, 0]
+// 3  [0, 0, 0, 0, 0, 36, 6, 1, 0, 0, 0]
+// 4  [0, 0, 0, 0, 0, 64, 8, 1, 0, 0, 0]
+// 5  [0, 0, 0, 0, 0, 0, 0, 0, 64, 8, 1]
+// 6  [1, 0, -8, -1, 0, 0, 0, 0, 0, 0, 0]
+// 7  [0, 0, 12, 1, 0, -12, -1, 0, 0, 0, 0]
+// 8 [0, 0, 0, 0, 0, 16, 1, 0, -16, -1, 0]
+// 9  [2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+// 10  [0, 0, 0, 0, 0, 0, 0, 0, 64, 8, 1]
 
     for( let i = 0; i < n; i++) {
-      // console.log( `iteration = ${i}` );
-      let pivot = Matrix.pivotization(A, B, i);
+      let pivot = this.pivotization(A, B, i);
       A = [...pivot.A];
       B = [...pivot.B]
 
-      for( let k = i + 1; k < n; k++ ) {
-        let factor = A[k][i] / A[i][i];
-        A[k][i] = factor;
+      // for( let k = i + 1; k < n; k++ ) {
+      //   let factor = A[k][i] / A[i][i];
+      //   A[k][i] = factor;
     
-        for( let j = 1; j < n; j++ ) {
-          A[k][j] = A[k][j] - factor * A[i][j];
-        }
-        B[k] = B[k] - factor * B[i];
-      }
+      //   for( let j = 1; j < n; j++ ) {
+      //     A[k][j] = A[k][j] - factor * A[i][j];
+      //   }
+      //   B[k] = B[k] - factor * B[i];
+      // }
     }
 
     // console.log("matrixA after gauss elimination");
@@ -90,15 +107,14 @@ class Matrix {
     // console.log("matrixB after gauss elimination");
     // console.log(B);
 
-    for ( let k = n-1; k >= 0; k-- ) {
-      let sum = 0;
-      for ( let x = n-1; x >= 0; x-- ) {
-        sum += A[k][x] * result[x];
-      }
-      result[k] = (B[k] - sum) / A[k][k];
-      // console.log( result[k] );
-    }
-
+    // for ( let k = n-1; k >= 0; k-- ) {
+    //   let sum = 0;
+    //   for ( let x = n-1; x >= 0; x-- ) {
+    //     sum += A[k][x] * result[x];
+    //   }
+    //   result[k] = (B[k] - sum) / A[k][k];
+    //   // console.log( result[k] );
+    // }
 
     return result;
   }
@@ -526,6 +542,50 @@ class Matrix {
     }
 
     return result;
+  }
+
+  public static rowEcholonForm(matrixA : number[][], matrixB : number[]) : number[] {
+    matrixA = matrixA.map((row, idx) => row.concat(matrixB[idx]));
+    function rref(mat: number[][]) {
+      let lead = 0;
+      for (let r = 0; r < mat.length; r++) {
+          if (mat[0].length <= lead) {
+              return;
+          }
+          let i = r;
+          while (mat[i][lead] == 0) {
+              i++;
+              if (mat.length == i) {
+                  i = r;
+                  lead++;
+                  if (mat[0].length == lead) {
+                      return;
+                  }
+              }
+          }
+  
+          const tmp = mat[i];
+          mat[i] = mat[r];
+          mat[r] = tmp;
+  
+          let val = mat[r][lead];
+          for (let j = 0; j < mat[0].length; j++) {
+              mat[r][j] = mat[r][j] / val;
+          }
+  
+          for (let i = 0; i < mat.length; i++) {
+              if (i == r) continue;
+              val = mat[i][lead];
+              for (let j = 0; j < mat[0].length; j++) {
+                  mat[i][j] = mat[i][j] - val * mat[r][j];
+              }
+          }
+          lead++;
+      }
+      return mat;
+  }
+  let answer = rref(matrixA)?.map(row => row[row.length - 1])
+  return answer!;
   }
 }
 

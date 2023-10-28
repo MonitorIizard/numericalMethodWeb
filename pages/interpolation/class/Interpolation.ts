@@ -1,5 +1,7 @@
-export default class Interpolation {
+import Matrix from "@/pages/linear-algebra/class/Matrix";
+import { number } from "mathjs";
 
+export default class Interpolation {
   public static newtonDividedDifference(x : number[], y : number[], xToFind : number) : {sum : number, answerOfC : number[]} {
     // console.log(xToFind);
     
@@ -80,4 +82,181 @@ export default class Interpolation {
     }
     return { fx, Llist };
   }
+
+  public static linearSpline(x : number[], y : number[], xToFind : number ) {
+    let prevCoordinate = { x : x[0] , y : y[0] };
+    let answer = 0;
+    let n = x.length;
+
+    for ( let i = 1; i < n; i++ ) {
+      let currentCoordinate = { x : x[i], y : y[i] };
+      if ( xToFind <= currentCoordinate.x ) {
+        let m = (currentCoordinate.y - prevCoordinate.y) / (currentCoordinate.x - prevCoordinate.x);
+        let c = prevCoordinate.y;
+        let deltaX = xToFind - prevCoordinate.x;
+        answer = m * deltaX + c;
+        break;
+      }
+      
+      prevCoordinate = currentCoordinate;
+    }
+
+    return answer;
+  }
+
+  public static quadraticSpline(x : number[], y : number[], xToFind : number ) {
+
+    if ( x.length == 2 ) {
+      let b = (y[1] - y[0]) / (x[1] - x[0]);
+      return {answer : this.linearSpline(x, y, xToFind), matrixX : [b, y[0]]};
+    }
+
+    function initializeMatrixB( y : number[] ) {
+      let matrixB = [];
+      let n = y.length;
+      for ( let i = 1; i < n - 1; i++ ) {
+        matrixB.push(y[i]);
+        matrixB.push(y[i]);
+      }
+      
+      matrixB.push(y[0]);
+      matrixB.push(y[n - 1]);
+      
+      for ( let i = 1; i < n - 1; i++ ) {
+        matrixB.push(0);
+      }
+      // n - 1 condition
+
+      return matrixB;
+    } 
+
+    function initializeMatrixA( setOfx : number[] ) {
+      let MatrixA : number[][] = [];
+      let n = setOfx.length - 1;
+      let lastIndexOfsetOfx = n - 1;
+      for ( let i = 0; i < 3*n - 1; i++ ) {
+        MatrixA.push([]);
+        
+        for ( let j = 0; j < 3*n - 1; j++ ) {
+          MatrixA[i].push(0);
+        }
+      }
+    
+      let lastIndexOfM = MatrixA.length - 1;
+      
+      let coorBetweenStart_End = setOfx.slice( 1, n );
+      let x = 1;
+      let currentLevel = 0;
+      
+      // between condition 
+      let k = 0;
+      for ( currentLevel = 0; currentLevel < 2*(n - 1); currentLevel++ ) {
+        if ( x == 2 ) {
+          k++;
+          x = 0;
+        }
+    
+        let j = (Math.ceil((currentLevel) / 2) * 3 ) - 1;
+        k =  Math.floor(currentLevel/2);
+        
+        if ( currentLevel == 0 ) {
+          MatrixA[currentLevel][0] = coorBetweenStart_End[ k ];
+          MatrixA[currentLevel][1] = 1;
+          continue;
+        }
+    
+        // console.log( j );
+        MatrixA[currentLevel][j] = Math.pow(coorBetweenStart_End[k], 2);
+        MatrixA[currentLevel][j+1] = coorBetweenStart_End[k], 2;
+        MatrixA[currentLevel][j+2] = 1;
+      }
+
+      currentLevel--;
+
+      // 2 close and end condition
+      MatrixA[++currentLevel][0] = setOfx[0];
+      MatrixA[currentLevel][1] = 1;
+    
+      MatrixA[++currentLevel][lastIndexOfM - 2] = Math.pow(setOfx[n], 2);
+      MatrixA[currentLevel][lastIndexOfM - 1] = setOfx[n];
+      MatrixA[currentLevel++][lastIndexOfM] = 1;
+    
+      // console.log( currentLevel, lastIndexOfM - 2 );
+    
+      // console.log( coorBetweenStart_End );
+      //slope 
+      let offSet = -1;
+      for ( let f = 0; f < MatrixA.length - currentLevel; f++ ) {
+        if ( f == 0 ) {
+          MatrixA[currentLevel + f][0] = 1;
+          MatrixA[currentLevel + f][2] = -2 * coorBetweenStart_End[f];
+          MatrixA[currentLevel + f][3] = -1;
+        } else {
+          offSet += 3;
+          MatrixA[currentLevel + f][offSet] = 2 * coorBetweenStart_End[f];
+          MatrixA[currentLevel + f][offSet + 1] = 1;
+          MatrixA[currentLevel + f][offSet + 3] = -2 * coorBetweenStart_End[f];
+          MatrixA[currentLevel + f][offSet + 4] = -1;
+        }
+        // console.log(f);
+      }
+      //   // console.log(f);
+
+      currentLevel++;
+
+      return MatrixA;
+    }
+
+    let matrixA = initializeMatrixA( x );
+    let matrixB = initializeMatrixB( y );
+    console.log( matrixA );
+
+    let matrixX = Matrix.rowEcholonForm(matrixA, matrixB);
+
+    let answer : number = 0;
+
+    let matrixX2 : number[][] = [];
+    for ( let i = 0, j = 0; i < matrixX.length; ) {
+          
+      if ( i < 2 ) {
+        matrixX2.push([]);
+        matrixX2[j].push(matrixX[0]);
+        matrixX2[j].push(matrixX[1]);
+        j++;
+        i+= 2;
+      }
+
+      if ( i >= 2 ) {
+        matrixX2.push([]);
+        matrixX2[j].push(matrixX[i]);
+        matrixX2[j].push(matrixX[i+1]);
+        matrixX2[j].push(matrixX[i+2]);
+        console.log(i);
+        j++;
+        i+=3;
+      }
+    }
+
+    for ( let i = 1; i < x.length; i++ ) {
+      if ( xToFind < x[i] && i <= 1) {
+        let Bx = matrixX[0] * xToFind;
+        let C = matrixX[1];
+        answer = Bx + C;
+        break;
+      }
+
+      if ( xToFind < x[i] && i >= 2) {
+        console.log( matrixX[i] );
+        let Ax2 = matrixX2[i-1][0] * Math.pow(xToFind, 2);
+        let Bx = matrixX2[i-1][1] * xToFind;
+        let C = matrixX2[i-1][2];
+        answer = Ax2 + Bx + C;
+        break;
+      }
+    }
+
+    return {answer, matrixX};
+  }
+
+
 }
