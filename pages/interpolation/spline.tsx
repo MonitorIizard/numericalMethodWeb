@@ -57,37 +57,43 @@ export default function Page() {
         let answer;
         let i;
 
-        let matrixX2 : number[][] = [];
-
-    for ( let i = 0, j = 0; i < matrixX.length; ) {
-          
-      if ( i < 2 ) {
-        matrixX2.push([]);
-        matrixX2[j].push(matrixX[0]);
-        matrixX2[j].push(matrixX[1]);
-        j++;
-        i+= 2;
-      }
-
-      if ( i >= 2 ) {
-        matrixX2.push([]);
-        matrixX2[j].push(matrixX[i]);
-        matrixX2[j].push(matrixX[i+1]);
-        matrixX2[j].push(matrixX[i+2]);
-        console.log(i);
-        j++;
-        i+=3;
-      }
-    }
         
-        console.log( matrixX2 );
-        for( let xtf = setOfx[0]; xtf <= setOfx[setOfx.length - 1]; xtf += step ) 
+        let matrixX2 : number[][] = [];
+        for ( let i = 0, j = 0; i < matrixX.length; ) {
+          
+          if ( i < 2 ) {
+            matrixX2.push([]);
+            matrixX2[j].push(matrixX[0]);
+            matrixX2[j].push(matrixX[1]);
+            j++;
+            i+= 2;
+          }
+          
+          if ( i >= 2 ) {
+            matrixX2.push([]);
+            matrixX2[j].push(matrixX[i]);
+            matrixX2[j].push(matrixX[i+1]);
+            matrixX2[j].push(matrixX[i+2]);
+            console.log(i);
+            j++;
+            i+=3;
+          }
+        }
+        
+        for( let xtf = setOfx[0]; xtf <= setOfx[setOfx.length - 1]; xtf += 0.1 ) 
         {
+          if ( setOfx.length == 2 ) {
+            let b = (setOfy[1] - setOfy[0]) / (setOfx[1] - setOfx[0]);
+            answer = b * (xtf - setOfx[0]) + setOfy[0];
+            next.push(new Point([xtf] , answer!));
+            continue;
+          }
           // console.log( xtf );
           for ( i = 1; i < setOfx.length; i++ ) {
             if ( xtf < setOfx[i] && i <= 1) {
               let Bx = matrixX[0] * xtf;
               let C = matrixX[1];
+              console.log(`Bx = ${Bx} C = ${C}`);
               answer = Bx + C;
               next.push(new Point([xtf] , answer!));
               break;
