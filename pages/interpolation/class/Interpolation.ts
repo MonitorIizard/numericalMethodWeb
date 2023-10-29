@@ -258,5 +258,134 @@ export default class Interpolation {
     return {answer, matrixX};
   }
 
+  public static cubricSpline(setOfx:number[], setOfy : number[], xToFind : number ) {
+    const matrixA = [];
+		const matrixB = [];
+    let n = setOfx.length - 1;
+		// value of interior knots (n - 1 knots)
+		// each knots have 2 functions
+		for (let i = 1; i < n; i++) {
+			const rowMatrix: number[] = [];
+			const x = setOfx[i];
+			const y = setOfy[i];
+
+			for (let j = 0; j < 4 * (i - 1); j++) rowMatrix.push(0);
+			rowMatrix.push(x * x * x);
+			rowMatrix.push(x * x);
+			rowMatrix.push(x);
+			rowMatrix.push(1);
+			for (let j = 0; j < 4 * (n - i); j++) rowMatrix.push(0);
+			matrixA.push(rowMatrix);
+			matrixB.push(y);
+
+			const rowMatrix2: number[] = [];
+			for (let j = 0; j < 4 * (i - 1) + 4; j++) rowMatrix2.push(0);
+			rowMatrix2.push(x * x * x);
+			rowMatrix2.push(x * x);
+			rowMatrix2.push(x);
+			rowMatrix2.push(1);
+			for (let j = 0; j < 4 * (n - i - 1); j++) rowMatrix2.push(0);
+			matrixA.push(rowMatrix2);
+			matrixB.push(y);
+		}
+
+		// value of end knots (2 knots)
+		{
+			const rowMatrix: number[] = [];
+			const x = setOfx[0];
+			const y = setOfy[0];
+			rowMatrix.push(x * x * x);
+			rowMatrix.push(x * x);
+			rowMatrix.push(x);
+			rowMatrix.push(1);
+			for (let j = 0; j < 4 * (n - 1); j++) rowMatrix.push(0);
+			matrixA.push(rowMatrix);
+			matrixB.push(y);
+
+			const rowMatrix2: number[] = [];
+			for (let j = 0; j < 4 * (n - 1); j++) rowMatrix2.push(0);
+			const x2 = setOfx[n];
+			const y2 = setOfy[n];
+			rowMatrix2.push(x2 * x2 * x2);
+			rowMatrix2.push(x2 * x2);
+			rowMatrix2.push(x2);
+			rowMatrix2.push(1);
+			matrixA.push(rowMatrix2);
+			matrixB.push(y2);
+		}
+
+		// first derivative of interior knots (n - 1 knots)
+		for (let i = 1; i < n; i++) {
+			const rowMatrix: number[] = [];
+			const x = setOfx[i];
+
+			for (let j = 0; j < 4 * (i - 1); j++) rowMatrix.push(0);
+			rowMatrix.push(3 * x * x);
+			rowMatrix.push(2 * x);
+			rowMatrix.push(1);
+			rowMatrix.push(0);
+			rowMatrix.push(-3 * x * x);
+			rowMatrix.push(-2 * x);
+			rowMatrix.push(-1);
+			rowMatrix.push(0);
+			for (let j = 0; j < 4 * (n - i - 1); j++) rowMatrix.push(0);
+			matrixA.push(rowMatrix);
+			matrixB.push(0);
+		}
+
+		// second derivative of interior knots (n - 1 knots)
+		for (let i = 1; i < n; i++) {
+			const rowMatrix: number[] = [];
+			const x = setOfx[i];
+
+			for (let j = 0; j < 4 * (i - 1); j++) rowMatrix.push(0);
+			rowMatrix.push(6 * x);
+			rowMatrix.push(2);
+			rowMatrix.push(0);
+			rowMatrix.push(0);
+			rowMatrix.push(-6 * x);
+			rowMatrix.push(-2);
+			rowMatrix.push(0);
+			rowMatrix.push(0);
+			for (let j = 0; j < 4 * (n - i - 1); j++) rowMatrix.push(0);
+			matrixA.push(rowMatrix);
+			matrixB.push(0);
+		}
+
+		// second derivative of end knots equals zero (2 knots)
+		{
+			const rowMatrix: number[] = [];
+			rowMatrix.push(6 * setOfx[0]);
+			rowMatrix.push(2);
+			rowMatrix.push(0);
+			rowMatrix.push(0);
+			for (let j = 0; j < 4 * (n - 1); j++) rowMatrix.push(0);
+			matrixA.push(rowMatrix);
+			matrixB.push(0);
+
+			const rowMatrix2: number[] = [];
+			for (let j = 0; j < 4 * (n - 1); j++) rowMatrix2.push(0);
+			rowMatrix2.push(6 * setOfx[n]);
+			rowMatrix2.push(2);
+			rowMatrix2.push(0);
+			rowMatrix2.push(0);
+			matrixA.push(rowMatrix2);
+			matrixB.push(0);
+		}
+
+		const matrixX : number[] = Matrix.rowEcholonForm(matrixA, matrixB);
+    let  answer = 0;
+    for ( let i = 0; i < n; i++ ) {
+      const a = matrixX[4*i];
+      const b = matrixX[4*i + 1];
+      const c = matrixX[4*i + 2];
+      const d = matrixX[4*i + 3];
+      if ( xToFind <= setOfx[i+1] ) {
+        answer = a * Math.pow(xToFind, 3) + b * Math.pow(xToFind, 2) + c * xToFind + d;
+        break;
+      }
+    }
+    return {answer, matrixX};
+  }
 
 }
