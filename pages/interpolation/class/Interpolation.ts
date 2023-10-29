@@ -209,7 +209,6 @@ export default class Interpolation {
 
     let matrixA = initializeMatrixA( x );
     let matrixB = initializeMatrixB( y );
-    console.log( matrixA );
 
     let matrixX = Matrix.rowEcholonForm(matrixA, matrixB);
 
@@ -231,7 +230,6 @@ export default class Interpolation {
         matrixX2[j].push(matrixX[i]);
         matrixX2[j].push(matrixX[i+1]);
         matrixX2[j].push(matrixX[i+2]);
-        console.log(i);
         j++;
         i+=3;
       }
@@ -246,7 +244,6 @@ export default class Interpolation {
       }
 
       if ( xToFind < x[i] && i >= 2) {
-        console.log( matrixX[i] );
         let Ax2 = matrixX2[i-1][0] * Math.pow(xToFind, 2);
         let Bx = matrixX2[i-1][1] * xToFind;
         let C = matrixX2[i-1][2];

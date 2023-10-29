@@ -72,7 +72,7 @@ export default function Page() {
 						matrixX2[j].push(matrixX[i]);
 						matrixX2[j].push(matrixX[i + 1]);
 						matrixX2[j].push(matrixX[i + 2]);
-						console.log(i);
+						// console.log(i);
 						j++;
 						i += 3;
 					}
@@ -90,7 +90,7 @@ export default function Page() {
 						if (xtf < setOfx[i] && i <= 1) {
 							let Bx = matrixX[0] * xtf;
 							let C = matrixX[1];
-							console.log(`Bx = ${Bx} C = ${C}`);
+							// console.log(`Bx = ${Bx} C = ${C}`);
 							answer = Bx + C;
 							next.push(new Point([xtf], answer!));
 							break;
@@ -145,6 +145,7 @@ export default function Page() {
 				<Card className="flex w-11/12 max-w-xl">
 					{methodMenu.map((methodName, index) => (
 						<Button
+              key={methodName}
 							size="large"
 							variant="contained"
 							className={`m-1 h-16 w-1/3 text-black ${

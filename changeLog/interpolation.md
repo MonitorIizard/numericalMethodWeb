@@ -1,7 +1,7 @@
 **Task**
 - [x] Newton Divided-difference
 - [x] Largrange
-- [ ] Spline
+- [x] Spline
 - Linear 
 - Quadratic
 - Cubric
@@ -10,7 +10,7 @@
 - Create Ui component for input
 - [x] inputField
 - [x] solution
-- [ ] calculate method
+- [x] calculate method
 - [x] Graph
 
 
@@ -48,4 +48,7 @@ Found bug about can't access object because type of setInputData function in inp
 **28-10-2566**
 #### Implement Spline
 - [x] create UI, 3 button to choose type of spline to utilize.
-- [ ] implement calculate method
+- [x] implement calculate method
+
+**29-10-2566**
+#### Implement Regression
