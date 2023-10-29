@@ -88,7 +88,7 @@ export default function Input( {setInputData} : Props) {
       next.forEach((data) => {
         data.isChecked = !isCheckAll;
       });
-      return next;
+      return next.splice(0, numberOfPoint);
     })
 
     setIsCheckAll((prev) => !prev);

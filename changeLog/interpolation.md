@@ -50,5 +50,3 @@ Found bug about can't access object because type of setInputData function in inp
 - [x] create UI, 3 button to choose type of spline to utilize.
 - [x] implement calculate method
 
-**29-10-2566**
-#### Implement Regression
