@@ -19,7 +19,7 @@ export default function Page() {
 	const [givenData, setGivenData] = useState<Point[]>([]);
 	const [graph, setGraph] = useState<Point[]>([]);
 	const [xToFind, setXToFind] = useState<number>(0);
-	const [method, setMethod] = useState<number>(2);
+	const [method, setMethod] = useState<number>(0);
 	const methodMenu = ['Linear', 'Quadratic', 'Cubric'];
 
 	useEffect(() => {

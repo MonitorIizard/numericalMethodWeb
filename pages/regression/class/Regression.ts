@@ -115,6 +115,66 @@ class Regression {
     return matrixX;
   }
 
+  public static multipleLinearRegression(x: number[][], y: number[], xToFind: number[]) {
+    let n = x.length;
+
+    x = x.map( ( row ) => [1, ...row]);
+    xToFind = [1, ...xToFind];
+
+    function initialMatrixA () {
+      let matrixA : number[][] = [];
+      let numberOfEquation = x[0].length; //3
+    
+      for ( let i = 0; i < numberOfEquation; i++ ) {
+        matrixA.push([]);
+        for ( let j = 0; j < numberOfEquation; j++ ) {
+          if ( i == 0 && j == 0 ) {
+            matrixA[i].push( n );
+            continue;
+          }
+    
+          //symmetric matrix
+          if ( j < i ) {
+            matrixA[i][j] = matrixA[j][i];
+            continue;
+          }
+          
+          let sum = 0;
+          for ( let k = 0; k < n; k++ ) {
+            sum += x[k][i] * x[k][j];
+            // iteration ++;
+          }
+    
+          matrixA[i].push( sum );
+        }
+      }
+    
+      return matrixA;
+    }
+    
+    function initialMatrixB (  ) {
+      let matrixB = [];
+      let numberOfEquation = x[0].length;
+    
+      for( let i = 0; i < numberOfEquation; i++ ) {
+        let sum = 0;
+        for ( let j = 0; j < n; j++ ) {
+            sum += y[j] * x[j][i];
+          }
+          matrixB.push( sum );
+        }
+    
+        return matrixB;
+    }
+    
+    
+    let matrixA = initialMatrixA(  );
+    let matrixB = initialMatrixB(  );
+    let matrixX = Matrix.rowEcholonForm( matrixA, matrixB );
+     
+    let answer = matrixX.reduce( (sum, currentValue, index) => sum + (currentValue * xToFind[index]), 0);
+    return answer;
+  }
 }
 
 export default Regression;
