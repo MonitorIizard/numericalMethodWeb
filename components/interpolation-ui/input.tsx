@@ -13,16 +13,19 @@ import 'katex/dist/katex.min.css';
 import Data from "@/pages/interpolation/class/Data";
 
 type Props = {
-  setInputData? : ( value : { data : Data[], target : number } ) => void;
+  setInputData? : ( value : { data : Data[], target : number, mOrder : number } ) => void;
+  m? : boolean;
 }
 
 
-export default function Input( {setInputData} : Props) {
+export default function Input( {setInputData, m} : Props) {
   let givenData = [ new Point([3], 2.5), new Point([4.5], 1), new Point ( [7], 2.5), new Point ( [9], 0.5)];
   const [numberOfPoint, setNumberOfPoint] = useState<number>(4);
   const [data, setData] = useState<Data[]>(givenData.map((element, index) => new Data(false, element)));
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
   const [xToFind, setXToFind] = useState<number>(5);
+  const [mOrder, setMOrder] = useState<number>(2);
+
   function resize(value: number) {
     setNumberOfPoint((prev) => {
       if ( value <= 0 ) {
@@ -79,7 +82,12 @@ export default function Input( {setInputData} : Props) {
       });
     }
 
-    // setInputData && setInputData({ data : data.filter((row) => row.isChecked), xToFind});
+    if ( name.includes('morder') ) {
+      if (Number(value) < 1 ) return ;
+      setMOrder(Number(value));
+    }
+
+    setInputData && setInputData({ data : data.filter((row) => row.isChecked), target : xToFind, mOrder});
   }
 
   function markAll(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -96,8 +104,8 @@ export default function Input( {setInputData} : Props) {
   }
 
   useEffect(() => { 
-    setInputData && setInputData({ data : data.filter((row) => row.isChecked), target : xToFind});
-  }, [data, xToFind]);
+    setInputData && setInputData({ data : data.filter((row) => row.isChecked), target : xToFind, mOrder});
+  }, [data, xToFind, mOrder]);
 
   return (
       <Card className="w-11/12 max-w-xl p-4">
@@ -111,6 +119,17 @@ export default function Input( {setInputData} : Props) {
                      value={xToFind}
                      onChange={(e) => onChangeHandle(e)}
                      fullWidth/>
+          {
+            m && <TextField 
+            label="m order"
+            type="number"
+            name="morder"
+            className="w-60"
+            required
+            value={mOrder}
+            onChange={(e) => onChangeHandle(e)}
+            fullWidth/>
+          }
           <TextField className="w-60" label="Number of Point" required type={"number"}
                     name="numberOfPoint" value={numberOfPoint} 
                     onChange={(e) => resize(Number(e.target.value))}/>

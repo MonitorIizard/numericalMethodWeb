@@ -58,8 +58,58 @@ class Regression {
       return matrixB;
     }
 
-    let matrixA = initialMatrixA();
-    let matrixB = initialMatrixB();
+    let matrixX = Matrix.rowEcholonForm(initialMatrixA(), initialMatrixB());
+
+    return matrixX;
+  }
+
+  public static  polynomialRegression(x: number[], y: number[], m : number) {
+    let n = x.length;
+
+    function findSetSigmaX (x:number[]) {
+      let sigmaX = [ n ]; 
+    
+      for ( let i = 0; i < 2 * m; i++ ) {
+        let sum = 0;
+        
+        for ( let j = 0; j < n; j++ ) {
+          sum += Math.pow( x[j], i + 1);
+        }
+    
+        sigmaX.push( sum );
+      }
+    
+      return sigmaX;
+    }
+
+    function initialMatrixA() {
+      let matrixA : number[][] = [];
+      let setOfSigmaX = findSetSigmaX(x);
+      
+      for ( let i = 0; i < m + 1; i++) {
+        matrixA.push([]);
+        for ( let j = 0; j < m + 1; j++) {
+          matrixA[i].push(setOfSigmaX[i + j]);
+        }
+      }
+
+      return matrixA;
+    }
+
+    function initialMatrixB() {
+      let matrixB : number[] = [];
+
+      for ( let i = 0; i < m + 1; i++ ) {
+        let sum = 0;
+          for ( let j = 0; j < n; j++) {
+            sum += Math.pow(x[j], i) * y[j]
+          } 
+        matrixB.push(sum);
+      }
+      
+      return matrixB;
+    }
+
     let matrixX = Matrix.rowEcholonForm(initialMatrixA(), initialMatrixB());
 
     return matrixX;
