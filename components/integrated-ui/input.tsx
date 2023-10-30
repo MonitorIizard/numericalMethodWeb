@@ -4,6 +4,7 @@ import { InlineMath } from "react-katex";
 import { Button, Card, TextField } from "@mui/material";
 import CalculateIcon from '@mui/icons-material/Calculate';
 
+
 type Props = {
   setData : ( value : {equation : string, xStart : number, xEnd : number, n : number}) => void;
 }

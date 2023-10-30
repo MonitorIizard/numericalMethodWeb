@@ -6,7 +6,6 @@ import Data from './class/Data';
 import Point from './class/Point';
 import { Button, Card } from '@mui/material';
 import Interpolation from './class/Interpolation';
-import { matrix } from 'mathjs';
 
 type InputData = {
 	data: Data[];
