@@ -10,6 +10,7 @@ export default class Interpolation {
     }
 
     let cache  : number[] = [];
+    let iteration = 0;
     let n = x.length;
 
     let givenData : {x : number, y : number}[] = Array.from({length : n}, (element, idx) => {
@@ -17,35 +18,42 @@ export default class Interpolation {
     });
 
     function findC(givenData : {x : number, y : number}[] , start : number , end : number ) : number {
-      let key = Number(`${start}${end}`);
-    
-      if ( key in cache ) {
-        return cache[key];
-      }
-      
+      iteration++;
       if( Math.abs(start - end) == 1 ) {
-        let deltaY = givenData[start].y - givenData[end].y;
+        let deltaY = givenData[end].y - givenData[start].y ;
         return deltaY;
       }
-    
-      let LeftNode = findC( givenData, start + 1, end) / ( givenData[start + 1].x - givenData[end].x );
-      let RightNode = findC( givenData, start, end - 1 ) / ( givenData[start].x - givenData[end - 1].x );
-    
-      cache[key] = RightNode;
-      cache[key] = LeftNode;
-    
-      return RightNode - LeftNode;
+      
+      let LeftNode;
+      let RightNode;
+      let key1 = Math.floor(Number(`${end}${start + 1}`));
+      let key2 = Math.floor(Number(`${end-1}${start}`));
+      
+      if ( cache[key1] ) {
+        LeftNode = cache[key1];
+        RightNode = findC( givenData, start, end - 1) / ( givenData[end - 1].x - givenData[start].x);
+      } else if ( cache[key2] ) {
+        LeftNode = findC( givenData, start + 1, end ) / ( givenData[end].x - givenData[start + 1].x);
+        RightNode = cache[key2];
+      } else {
+        LeftNode = findC( givenData, start + 1, end ) / ( givenData[end].x - givenData[start + 1].x);
+        RightNode = findC( givenData, start, end - 1) / ( givenData[end - 1].x - givenData[start].x);
+        cache[key1] = LeftNode;
+        cache[key2] = RightNode;
+      }
+      
+      return LeftNode - RightNode;
     }
 
     function approximateX ( givenData : {x : number, y: number}[], xToFind : number ) {
       let answerOfC = [ givenData[0].y ];
-      
+
       for( let i = 1; i < givenData.length; i++ ) {
         let currentData = givenData.slice(0, i+1);
-        answerOfC[i] = findC( currentData, 0, currentData.length - 1) / (currentData[0].x - currentData[currentData.length-1].x);
-        // console.log( currentData );
+        answerOfC[i] = findC( currentData, 0, currentData.length - 1) / (currentData[currentData.length-1].x - currentData[0].x);
+        cache = [];
       }
-      // console.log( answerOfC );
+
       let sum = answerOfC[0];
       for ( let i = 1; i < answerOfC.length; i++ ) {
         let currentSumThisTerm = 1;
