@@ -4,16 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { BlockMath, InlineMath } from 'react-katex';
-import SetOfResult from '../Class/SetOfResult';
+import SetOfResult from './Class/SetOfResult';
 import { evaluate } from 'mathjs';
-import Column from '../Class/Column';
-import StickyHeadTable from '@/components/ui/DataTable';
+import Column from './Class/Column';
+import StickyHeadTable from '@/components/ui/dataTable';
 import ShowSolution from '@/components/ui/ShowSolution';
 import PlotGraph from '@/pages/Graph';
 import ModalEdit from '@/components/ui/Modal';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import NewptonRophson from '../Class/NewtonRopson';
+import NewptonRophson from './Class/NewtonRopson';
 
 const columns: Column[] = [
 	{ id: 'iterationNo', label: 'Iteration No.' },

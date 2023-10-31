@@ -1,19 +1,19 @@
-import OnePointIteration from '../Class/OnePointIteration';
 import { Button, Card, Modal, TextField } from '@mui/material';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { BlockMath, InlineMath } from 'react-katex';
-import SetOfResult from '../Class/SetOfResult';
+import SetOfResult from './Class/SetOfResult';
 import { evaluate } from 'mathjs';
-import Column from '../Class/Column';
-import StickyHeadTable from '@/components/ui/DataTable';
+import Column from './Class/Column';
+import StickyHeadTable from '@/components/ui/dataTable';
 import ShowSolution from '@/components/ui/ShowSolution';
 import PlotGraph from '@/pages/Graph';
 import ModalEdit from '@/components/ui/Modal';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import Secant from './Class/Secant';
 
 const columns: Column[] = [
 	{ id: 'iterationNo', label: 'Iteration No.' },
@@ -21,16 +21,17 @@ const columns: Column[] = [
 	{ id: 'tolerance', label: 'Tolerance' }
 ];
 
-function page() {
+function Page() {
 	const [showEquation, setShowEquation] = useState<string>(' ');
 	const [openNotify, setOpenNotify] = useState<boolean>(true);
 	const [equation, setEquation] = useState<string>(' ');
-	const [xStart, setxStart] = useState<number>(0);
+	const [xStart1, setxStart1] = useState<number>(0);
+  const [xStart2, setxStart2] = useState<number>(0);
 	const [errorTol, setErrorTol] = useState<number>(0);
 	const [answer, setAnswer] = useState<number>(0);
 	const [point, setPoint] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-	const [domain, setDomain] = useState<number[]>([-10, 10]);
-	const [range, setRange] = useState<number[]>([-10, 10]);
+	const [domain, setDomain] = useState<number[]>([-500, 500]);
+	const [range, setRange] = useState<number[]>([-500, 500]);
 	const [step, setStep] = useState<number>(1);
 	const [result, setResult] = useState<SetOfResult[]>([]);
 	const [open, setOpen] = useState(false);
@@ -40,10 +41,11 @@ function page() {
 	});
 	const [viewBox, setViewBox] = useState<number[]>([-10, 10]);
 
-	let onePointIterationSolver = new OnePointIteration({
+	let secantSolver = new Secant({
 		xStart: 0,
-		tolerance: 0,
-		fx: ""
+    xStart2 : 0,
+		es: 0,
+		equation: ""
 	});
 
 	const style = {
@@ -77,10 +79,9 @@ function page() {
 		const formData = new FormData(form);
 		const formJson = Object.fromEntries(formData.entries());
 		const inputEquation = formJson.functionInput.toString();
-		const inputxStart = formJson.Xstart;
+		const inputxStart1 = formJson.Xstart1;
+    const inputxStart2 = formJson.Xstart2;
 		const inputErrorTol = formJson.errorTol;
-
-    setxStart(+inputxStart);
 		
 		if (!isEquationCalculable(inputEquation)) {
 			setOpen(true);
@@ -91,7 +92,7 @@ function page() {
 			return;
 		}
 
-		if (Number.isNaN(+inputxStart)) {
+		if (Number.isNaN(+inputxStart1) || Number.isNaN(+inputxStart2)) {
 			setOpen(true);
 			setModalContent({
 				header: 'X start is not a number 😡.',
@@ -118,10 +119,9 @@ function page() {
 			return;
 		}
 
-		setResult([]);
-
 		setEquation(inputEquation);
-		setxStart(+inputxStart);
+		setxStart1(+inputxStart1);
+    setxStart2(+inputxStart2);
 		setErrorTol(+inputErrorTol);
 	}
 
@@ -145,19 +145,18 @@ function page() {
 	useEffect(() => {
     if ( count.current > 1 && process.env.NODE_ENV === "development" ||
 				 count.current > 0 && process.env.NODE_ENV === "production") {
-      onePointIterationSolver.setXstart(xStart);
-		  onePointIterationSolver.setFx(equation);
-		  onePointIterationSolver.setTolerance(errorTol);
+      secantSolver.setXstart1(xStart1);
+      secantSolver.setXstart2(xStart2);
+		  secantSolver.setEquation(equation);
+		  secantSolver.setES(errorTol);
 
-		  let resultOfSolve = onePointIterationSolver.solve();
+		  let resultOfSolve = secantSolver.solve();
 		  let answer = resultOfSolve[resultOfSolve.length - 1].root;
 		  setResult(resultOfSolve);
 		  // console.log(resultOfSolve);
 		//setResult(resultOfSolve);
 		  setAnswer(answer);
-		  setPoint({x : answer, y : onePointIterationSolver.f(answer)});
-
-			console.log( point, equation);
+		  setPoint({x : answer, y : secantSolver.f(answer)});
 
 			setStep((1000) / 10);
 			setDomain([-(1000 / 2), (1000/ 2)]);
@@ -165,7 +164,7 @@ function page() {
 			setRange([-(1000 / 2), +(1000 / 2)]);
     }
     count.current++;
-	}, [equation, errorTol, xStart])
+	}, [equation, errorTol, xStart1, xStart2])
 
 	const count1 = useRef(0);
 	useEffect(() => {
@@ -175,7 +174,6 @@ function page() {
 				{
 					setStep((Math.abs((viewBox[0] / 10))) ? (Math.abs((viewBox[0] / 10))) : 1000 / 10);
 				}
-			console.log(step);
 		}
 		count1.current++;
 	}, [viewBox])
@@ -201,7 +199,7 @@ function page() {
 							component="h2"
 							className="text-1xl text-center font-bold text-black"
 						>
-							Before use one point iteration method
+							Before use Secant method
 						</Typography>
 						<Typography id="modal-modal-description" sx={{ mt: 2 }} className="text-black">
 							You need to reform the equation in form <span>
@@ -228,7 +226,7 @@ function page() {
 				</Modal>
 			</div>
 
-			<h1 className="my-8 text-center text-3xl font-bold">One Point Iteration</h1>
+			<h1 className="my-8 text-center text-3xl font-bold">Secant Method</h1>
 
 			<div className="mx-auto flex w-11/12 max-w-xl flex-col gap-4 text-xl">
 				<Card variant="outlined" className=" p-8">
@@ -258,21 +256,30 @@ function page() {
 							<div className="flex w-full gap-2">
 								<TextField
 									id="outlined-basic"
-									label="X start"
+									label="X start point 1"
 									variant="outlined"
-									name="Xstart"
+									name="Xstart1"
 									fullWidth
 									required
 								/>
 								<TextField
+									id="outlined-basic"
+									label="X start point 2"
+									variant="outlined"
+									name="Xstart2"
+									fullWidth
+									required
+								/>
+							</div>
+
+              <TextField
 									id="outlined-basic"
 									label="Tolerance"
 									variant="outlined"
 									name="errorTol"
 									fullWidth
 									required
-								/>
-							</div>
+							/>
 
 							<Button
 								variant="contained"
@@ -296,10 +303,10 @@ function page() {
 								\\end{align}`}</BlockMath>
 				</Card>
 
-				<ShowSolution answer={answer} isSolution={answer <= -5000 || answer >= 5000 ? false : true} />
+				<ShowSolution answer={answer} isSolution={result.length >= 1000 ? false : true} />
 
 				<div className='relative'>
-					<PlotGraph equation={[equation, "x"]} step={step} domain={viewBox} range={viewBox} point={point} />
+					<PlotGraph equation={[equation]} step={step} domain={viewBox} range={viewBox} point={point} />
 					<div className=' absolute top-5 right-5 flex gap-2'>
 						<Button className="bg-white hover:bg-green-100" onClick={zoomIn} variant="contained"><AddIcon className='fill-black'/></Button>
 						<Button className="bg-white hover:bg-green-100" onClick={zoomOut} variant="contained"><RemoveIcon className='fill-black'/></Button>
@@ -312,4 +319,4 @@ function page() {
 	);
 }
 
-export default page;
+export default Page;

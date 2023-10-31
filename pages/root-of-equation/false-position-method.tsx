@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import SetOfResult from '../Class/SetOfResult';
+import SetOfResult from './Class/SetOfResult';
 import ShowSolution from '@/components/ui/ShowSolution';
-import Column from '../Class/Column';
+import Column from './Class/Column';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { evaluate, range } from 'mathjs';
 import { InlineMath, BlockMath } from 'react-katex';
 import { Button, Card, TextField } from '@mui/material';
-import StickyHeadTable from '@/components/ui/DataTable';
+import StickyHeadTable from '@/components/ui/dataTable';
 import PlotGraph from '@/pages/Graph';
 import Modal from '@/components/ui/Modal'
-import RootOfEquation from '../Class/RootOfEquation';
+import RootOfEquation from './Class/RootOfEquation';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 

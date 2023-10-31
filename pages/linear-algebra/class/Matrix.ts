@@ -74,47 +74,30 @@ class Matrix {
     let B = [...matrixB];
 
     console.log(A);
-// 0  [4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-// 1  [0, 0, 16, 4, 1, 0, 0, 0, 0, 0, 0]
-// 2  [0, 0, 36, 6, 1, 0, 0, 0, 0, 0, 0]
-// 3  [0, 0, 0, 0, 0, 36, 6, 1, 0, 0, 0]
-// 4  [0, 0, 0, 0, 0, 64, 8, 1, 0, 0, 0]
-// 5  [0, 0, 0, 0, 0, 0, 0, 0, 64, 8, 1]
-// 6  [1, 0, -8, -1, 0, 0, 0, 0, 0, 0, 0]
-// 7  [0, 0, 12, 1, 0, -12, -1, 0, 0, 0, 0]
-// 8 [0, 0, 0, 0, 0, 16, 1, 0, -16, -1, 0]
-// 9  [2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-// 10  [0, 0, 0, 0, 0, 0, 0, 0, 64, 8, 1]
 
     for( let i = 0; i < n; i++) {
-      let pivot = this.pivotization(A, B, i);
-      A = [...pivot.A];
-      B = [...pivot.B]
+      // let pivot = this.pivotization(A, B, i);
+      // A = pivot.A.map(row => [...row]);
+      // B = [...pivot.B]
 
-      // for( let k = i + 1; k < n; k++ ) {
-      //   let factor = A[k][i] / A[i][i];
-      //   A[k][i] = factor;
+      for( let k = i + 1; k < n; k++ ) {
+        let factor = A[k][i] / A[i][i];
+        A[k][i] = factor;
     
-      //   for( let j = 1; j < n; j++ ) {
-      //     A[k][j] = A[k][j] - factor * A[i][j];
-      //   }
-      //   B[k] = B[k] - factor * B[i];
-      // }
+        for( let j = 1; j < n; j++ ) {
+          A[k][j] = A[k][j] - factor * A[i][j];
+        }
+        B[k] = B[k] - factor * B[i];
+      }
     }
 
-    // console.log("matrixA after gauss elimination");
-    // console.log(A);
-    // console.log("matrixB after gauss elimination");
-    // console.log(B);
-
-    // for ( let k = n-1; k >= 0; k-- ) {
-    //   let sum = 0;
-    //   for ( let x = n-1; x >= 0; x-- ) {
-    //     sum += A[k][x] * result[x];
-    //   }
-    //   result[k] = (B[k] - sum) / A[k][k];
-    //   // console.log( result[k] );
-    // }
+    for ( let k = n-1; k >= 0; k-- ) {
+      let sum = 0;
+      for ( let x = n-1; x >= 0; x-- ) {
+        sum += A[k][x] * result[x];
+      }
+      result[k] = (B[k] - sum) / A[k][k];
+    }
 
     return result;
   }

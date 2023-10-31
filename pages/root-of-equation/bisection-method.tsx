@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import SetOfResult from '../Class/SetOfResult';
-import BisectionMethod from '../Class/Bisection';
+import SetOfResult from './Class/SetOfResult';
+import BisectionMethod from './Class/Bisection';
 import { evaluate } from 'mathjs';
 import { InlineMath, BlockMath } from 'react-katex';
-import Column from '../Class/Column';
+import Column from './Class/Column';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { Button, Card, TextField } from '@mui/material';
-import StickyHeadTable from '@/components/ui/DataTable';
+import StickyHeadTable from '@/components/ui/dataTable';
 import ShowSolution from '@/components/ui/ShowSolution';
 import PlotGraph from '@/pages/Graph';
 import Modal from '@/components/ui/Modal';

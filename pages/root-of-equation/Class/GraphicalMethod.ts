@@ -1,3 +1,4 @@
+import InputData from "./InputData";
 import RootOfEquation from "./RootOfEquation";
 import SetOfResult from "./SetOfResult";
 import { evaluate } from "mathjs";
@@ -8,19 +9,16 @@ interface solveArguement {
 }
 
 export default class GraphicalMethod extends RootOfEquation {
-	fx: string;
-
-	constructor(props: { xStart: number; xEnd: number; es: number; fx: string }) {
-		super(props.xStart, props.xEnd, props.es);
-		this.fx = props.fx;
+	constructor( inputData : InputData ) {
+		super(inputData.equation, inputData.xstart, inputData.xend || 0 , inputData.errorTol || 0);
 	}
 
 	f(x: number) {
-		return evaluate(this.fx, { x });
+		return evaluate(this.equation, { x });
 	}
 
 	calcultateStep() {
-		const step = Math.log(this.xEnd - this.xStart) / Math.log(10) ;
+		const step = Math.log(this.xEnd! - this.xStart) / Math.log(10) ;
 		if ( step % 1 == 0 ) return Math.pow(10, step - 1);
 		return Math.pow(10, Math.floor(step));
 	}
@@ -71,8 +69,8 @@ export default class GraphicalMethod extends RootOfEquation {
 			iter += 1;
 			temp = newTemp;
 
-			if( x > this.xEnd ) {
-				x = this.xEnd;
+			if( x > this.xEnd! ) {
+				x = this.xEnd!;
 			}	
 		}
 
@@ -81,7 +79,7 @@ export default class GraphicalMethod extends RootOfEquation {
 	}
 
 	getFunction() {
-		return this.fx;
+		return this.equation;
 	}
 
 	getXstart() {

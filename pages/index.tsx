@@ -3,12 +3,12 @@ import Link from 'next/link';
 
 function Page() {
 	let RootOfEquationLink = [
-		{id:"1", name: 'Graphical Method', link: './RootOfEquation/GraphicalMethod/GraphicalMethodPage'},
-		{id:"2", name: 'Bisection Method', link: './RootOfEquation/BisectionMethod/BisectionMethodPage'},
-		{id:"3", name: 'False Position', link: './RootOfEquation/FalsePositonMethod/FalsePositionMethodPage'},
-		{id:"4", name: 'One Point Iteration', link: './RootOfEquation/OnePointIteration/OnePointIterationPage'},
-		{id:"5", name: 'Newton Raphson', link: './RootOfEquation/OnePointIteration/OnePointIterationPage'},
-		{id:"6", name: 'Secant', link: './RootOfEquation/SecantMethod/SecantMethodPage'},];
+		{id:"1", name: 'Graphical Method', link: './root-of-equation/graphical-method/graphical-method'},
+		{id:"2", name: 'Bisection Method', link: './root-of-equation/bisection-method'},
+		{id:"3", name: 'False Position', link: './root-of-equation/false-position-method'},
+		{id:"4", name: 'One Point Iteration', link: './root-of-equation/one-point-iteration-method'},
+		{id:"5", name: 'Newton Raphson', link: './root-of-equation/newton-rophson-method'},
+		{id:"6", name: 'Secant', link: './root-of-equation/secant-method'},];
 
 	let LinerAlgebra = [
 		{id:"1L", name: 'Crammer Rule', link: './LinearAlgebra/CrammerRule/Page'},

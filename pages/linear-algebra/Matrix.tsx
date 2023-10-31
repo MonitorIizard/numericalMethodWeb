@@ -122,10 +122,10 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 
 	return (
 		<>
-			<div className="mx-auto flex w-11/12 max-w-xl flex-col justify-center gap-4">
+			<div className="mx-auto flex w-11/12 max-w-3xl flex-col  gap-4 overflow-scroll">
 
 				<form action="">
-					<Card className="flex flex-col overflow-scroll p-8 gap-4">
+					<Card className="flex flex-col p-8 gap-4 overflow-scroll">
 						
 					<div className='mx-auto flex gap-4'>
 						<div className='my-auto'>

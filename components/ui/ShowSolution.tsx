@@ -6,7 +6,7 @@ type Props = {
   isSolution? : boolean;
 }
 
-export default function Page ({answer, isSolution} : Props ) {
+export default function Page ({answer, isSolution = true} : Props ) {
   return (
     <Card>
       <div className="py-8 flex justify-center">
