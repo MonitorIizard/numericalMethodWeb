@@ -139,6 +139,7 @@ function Input({ isXtoEnd = true , setInputData, isSecantMethod = false }: Props
 							className="mx-auto mt-4 w-1/2 bg-black"
 							startIcon={<CalculateRoundedIcon />}
 							size="large"
+							fullWidth
 						>
 							Calculate 😉
 						</Button>
