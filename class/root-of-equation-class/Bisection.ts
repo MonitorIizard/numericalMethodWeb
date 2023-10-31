@@ -28,6 +28,7 @@ class BisectionMethod extends RootOfEquation {
 		let result = [];
 
 		while (true && iteration < maxIteration) {
+
 			xm = this.findXm(xl, xr);
 			
 			let tolerance = Math.abs( (xm - temp) / temp) * 100;

@@ -74,7 +74,7 @@ function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
 
 			const step = Math.pow(10, Math.floor(log(Math.abs(xend - xstart)) / log(10)) - 1);
 
-			if ( xend < xstart ) {
+			if ( xend < xstart && openEndSolver || secantSolver ) {
 				for ( let i = xstart; i >= xend; i -= step ) {
 					next.push(new Point([i], solver!.f(i)));
 				}
