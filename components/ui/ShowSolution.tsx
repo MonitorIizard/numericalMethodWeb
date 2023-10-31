@@ -9,7 +9,7 @@ type Props = {
 export default function Page ({answer, isSolution = true} : Props ) {
   return (
     <Card>
-      <div className="py-8 flex justify-center">
+      <div className="w-11/12 max-w-xl py-8 flex justify-center">
         {
         !isSolution ?
         <span>

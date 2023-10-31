@@ -1,17 +1,16 @@
 import { evaluate } from "mathjs";
 import RootOfEquation from "./RootOfEquation";
 import SetOfResult from "./SetOfResult";
+import InputData from "./InputData";
 
 class BisectionMethod extends RootOfEquation {
-	fx: string;
 
-	constructor(props: { xStart: number; xEnd: number; es: number; fx: string }) {
-		super(props.xStart, props.xEnd, props.es);
-		this.fx = props.fx;
+	constructor( inputData : InputData ) {
+		super(inputData.equation, inputData.xstart, inputData.xend || 0 , inputData.errorTol || 0);
 	}
 
 	f(x: number) {
-		return evaluate(this.fx, {x});
+		return evaluate(this.equation, {x});
 		// return x - 5;
 	}
 
@@ -21,7 +20,7 @@ class BisectionMethod extends RootOfEquation {
 
 	solve() {
 		let xl = this.xStart;
-		let xr = this.xEnd;
+		let xr = this.xEnd!;
 		let xm;
 		let temp = xl;
 		let iteration = 0;

@@ -1,3 +1,5 @@
+import InputData from "./InputData";
+
 abstract class RootOfEquation {
 	xStart: number = 0;
 	es: number = 0;
@@ -14,6 +16,13 @@ abstract class RootOfEquation {
 	abstract f(x: number): number;
 
 	abstract solve(): any;
+
+	setNewValue(inputData : InputData) {
+		this.equation = inputData.equation;
+		this.xStart = inputData.xstart;
+		this.xEnd = inputData.xend;
+		this.es = inputData.errorTol;
+	}
 }
 
 export default RootOfEquation ;
