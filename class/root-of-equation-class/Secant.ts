@@ -1,19 +1,18 @@
 import { derivative, evaluate } from "mathjs";
 import RootOfEquation from "./RootOfEquation";
 import SetOfResult from "./SetOfResult";
+import InputData from "./InputData";
 
 class Secant extends RootOfEquation {
-	fx: string;
   xStart2 : number;
 
-	constructor(props: { xStart: number; xStart2 : number; es: number; equation: string }) {
-		super(props.xStart, 0, props.es);
-		this.fx = props.equation;
-    this.xStart2 = props.xStart2;
+	constructor({inputData, xStart2} : { inputData : InputData, xStart2: number}) {
+		super(inputData.equation, inputData.xstart, inputData.errorTol);
+    this.xStart2 = xStart2;
 	}
 
 	f(x: number) {
-		return evaluate(this.fx, { x });
+		return evaluate(this.equation, { x });
 		// return x - 5;
 	}
 
@@ -56,7 +55,7 @@ class Secant extends RootOfEquation {
   }
 
 	setEquation(equation: string) {
-		this.fx = equation;
+		this.equation = equation;
 	}
 
 	setES(es: number) {

@@ -2,9 +2,9 @@ import Graph from "@/components/interpolation-ui/graph";
 import Input from "../../components/interpolation-ui/input"
 import ShowSolution from "@/components/interpolation-ui/show-solution"
 import { useEffect, useRef, useState } from "react";
-import Data from "@/pages/interpolation/class/Data";
-import Point from "./class/Point";
-import Regression from "./class/Regression";
+import Data from "@/class/interpolation-class/Data";
+import Point from "../../class/regression-class/Point";
+import Regression from "../../class/regression-class/Regression";
 
 type InputData = {
   data : Data[];
@@ -51,14 +51,13 @@ export default function Page() {
       setGivenData(data);
       setXToFind(x);
       setMOrder(mOrder);
-      console.log(inputData);
     }
     count.current++;
   }, [inputData]);
 
   return (
     <div className="flex flex-col gap-6 items-center">
-      <h1 className="my-8 text-center text-3xl font-bold">Linear Regression</h1>
+      <h1 className="my-8 text-center text-3xl font-bold">Polynomial Regression</h1>
       <Input setInputData={setInputData} m={true}/>
       <ShowSolution answer={[answer]}
                     xToFind={xToFind}/>

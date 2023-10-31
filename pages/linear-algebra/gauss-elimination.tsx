@@ -1,5 +1,5 @@
-import MatrixUI from "../Matrix";
-import Matrix from "../class/Matrix";
+import MatrixUI from "./matrix-inversion";
+import Matrix from "../../class/linear-algebra-class/Matrix";
 
 function Page() {
 

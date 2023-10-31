@@ -46,8 +46,8 @@ export default class FalsePositionMethod extends RootOfEquation {
 
 			xOld = x1;
 			iteration++;
-			console.log(x1 + ' ' + tol + ' ' + es);
-			console.log(xOld + ' ' + x1 + ' ' + this.f(xOld) + ' ' + this.f(x1));
+			// console.log(x1 + ' ' + tol + ' ' + es);
+			// console.log(xOld + ' ' + x1 + ' ' + this.f(xOld) + ' ' + this.f(x1));
 		}
 
 		return result;

@@ -1,4 +1,4 @@
-import Matrix from "@/pages/linear-algebra/class/Matrix";
+import Matrix from "@/class/linear-algebra-class/Matrix";
 
 class Regression {
   public static  linearRegression(x: number[], y: number[], m : number = 1) {

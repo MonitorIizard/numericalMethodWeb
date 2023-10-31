@@ -2,10 +2,10 @@ import Input from '@/components/interpolation-ui/input';
 import ShowSolution from '@/components/interpolation-ui/show-solution';
 import Graph from '@/components/interpolation-ui/graph';
 import { useEffect, useRef, useState } from 'react';
-import Data from './class/Data';
-import Point from './class/Point';
+import Data from '../../class/interpolation-class/Data';
+import Point from '../../class/interpolation-class/Point';
 import { Button, Card } from '@mui/material';
-import Interpolation from './class/Interpolation';
+import Interpolation from '../../class/interpolation-class/Interpolation';
 
 type InputData = {
 	data: Data[];

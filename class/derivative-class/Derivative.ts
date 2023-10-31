@@ -1,4 +1,4 @@
-import InputData from "@/pages/derivative/class/InputData";
+import InputData from "@/class/derivative-class/InputData";
 import { number } from "mathjs";
 
 const { derivative, evaluate, e } = require("mathjs")

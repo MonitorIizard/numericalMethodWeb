@@ -1,13 +1,14 @@
 import App from "./app";
-import FalsePosition from "./Class/FalsePosition";
-import InputData from "./Class/InputData";
+import FalsePosition from "../../class/root-of-equation-class/FalsePosition";
+import InputData from "../../class/root-of-equation-class/InputData";
 
 export default function Page() {
 	const solver = new FalsePosition(InputData.createInputData('', 0, 0, 0));
 
 	return (
 		<div>
-			<App solver={solver}></App>
+			<h1 className="my-8 text-center text-3xl font-bold text-black">False Position Method</h1>
+			<App closeEndSolver={solver}></App>
 		</div>
 	)
 }

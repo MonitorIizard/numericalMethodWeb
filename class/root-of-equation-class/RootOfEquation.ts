@@ -6,7 +6,7 @@ abstract class RootOfEquation {
 	xEnd?: number = 0;
 	equation: string = "";
 
-	constructor(equation : string, xStart: number, xEnd: number, es: number) {
+	constructor(equation : string, xStart: number, es: number, xEnd?: number ) {
 		this.equation = equation;
 		this.xStart = xStart;
 		this.es = es;

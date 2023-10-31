@@ -1,11 +1,11 @@
-import Data from './class/Data';
-import Interpolation from './class/Interpolation';
+import Data from '../../class/interpolation-class/Data';
+import Interpolation from '../../class/interpolation-class/Interpolation';
 import { useEffect, useRef, useState } from 'react';
 import Graph from '@/components/interpolation-ui/graph';
 import Input from '@/components/interpolation-ui/input';
 import ShowSolution from '@/components/interpolation-ui/show-solution';
 import { number } from 'mathjs';
-import Point from './class/Point';
+import Point from '../../class/interpolation-class/Point';
 
 type InputData = {
 	data: Data[];

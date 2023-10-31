@@ -1,6 +1,6 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
-import Point from '@/pages/interpolation/class/Point';
+import Point from '@/class/interpolation-class/Point';
 import { Data} from 'plotly.js';
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 

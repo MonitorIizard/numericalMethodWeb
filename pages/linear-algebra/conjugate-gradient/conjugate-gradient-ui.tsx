@@ -4,8 +4,8 @@ import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
 import ShowSolution from '../../../components/ui/ShowSolutionMatrix';
-import Record from '../class/Record';
-import OutputTable from '../OutputTable';
+import Record from '../../../class/linear-algebra-class/Record';
+import OutputTable from '../../../components/linear-algebra/OutputTable';
 
 type Props = {
 	iterator?: (Ax: number[][], B: number[], errorTol : number) => Record[];

@@ -2,8 +2,8 @@ import Graph from "@/components/interpolation-ui/graph";
 import Input from "../../components/regression-ui/input-multi-linear-regression"
 import ShowSolution from "@/components/interpolation-ui/show-solution"
 import { useEffect, useRef, useState } from "react";
-import Data from "@/pages/interpolation/class/Data";
-import Regression from "./class/Regression";
+import Data from "@/class/interpolation-class/Data";
+import Regression from "../../class/regression-class/Regression";
 
 type InputData = {
   data : Data[];

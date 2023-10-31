@@ -1,22 +1,20 @@
 import { derivative, evaluate } from "mathjs";
 import RootOfEquation from "./RootOfEquation";
 import SetOfResult from "./SetOfResult";
+import InputData from "./InputData";
 
 class NewptonRophson extends RootOfEquation {
-	fx: string;
-
-	constructor(props: { xStart: number; es: number; equation: string }) {
-		super(props.xStart, 0, props.es);
-		this.fx = props.equation;
+	constructor(inputData : InputData) {
+		super(inputData.equation, inputData.xstart, inputData.errorTol);
 	}
 
 	f(x: number) {
-		return evaluate(this.fx, { x });
+		return evaluate(this.equation, { x });
 		// return x - 5;
 	}
 
 	fd(x: number) {
-		return derivative(this.fx, 'x').evaluate({ x });
+		return derivative(this.equation, 'x').evaluate({ x });
 	}
 
 	solve() {
@@ -49,7 +47,7 @@ class NewptonRophson extends RootOfEquation {
 
 
 	setEquation(equation: string) {
-		this.fx = equation;
+		this.equation = equation;
 	}
 
 	setES(es: number) {

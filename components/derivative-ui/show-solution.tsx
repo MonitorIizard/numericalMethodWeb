@@ -1,7 +1,7 @@
 import { InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import { Card } from '@mui/material';
-import { DifferentiationResult } from '@/pages/derivative/class/Derivative';
+import { DifferentiationResult } from '@/class/derivative-class/Derivative';
 
 type Props = {
   result : DifferentiationResult;

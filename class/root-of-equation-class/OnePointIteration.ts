@@ -1,6 +1,7 @@
 import { evaluate } from "mathjs";
 import RootOfEquation from "./RootOfEquation";
 import SetOfResult from "./SetOfResult";
+import InputData from "./InputData";
 
 interface ConstructorInterface {
 	xStart: number;
@@ -9,15 +10,13 @@ interface ConstructorInterface {
 }
 
 class OnePointIteration extends RootOfEquation {
-	fx: string;
 
-	constructor({ xStart = 0, tolerance = 0, fx = ' ' }: ConstructorInterface) {
-		super(xStart, 0, tolerance);
-		this.fx = fx;
+	constructor(inputData : InputData) {
+		super(inputData.equation, inputData.xstart, inputData.errorTol);
 	}
 
 	f(x: number): any {
-		return evaluate(this.fx, { x });
+		return evaluate(this.equation, { x });
 	}
 
 	solve() {
@@ -51,7 +50,7 @@ class OnePointIteration extends RootOfEquation {
 	}
 
 	setFx(fx:string) {
-		this.fx = fx;
+		this.equation = fx;
 	}
 
 	setTolerance(tol:number) {

@@ -1,6 +1,6 @@
-import SetOfResult from "@/pages/root-of-equation/Class/SetOfResult";
+import SetOfResult from "@/class/root-of-equation-class/SetOfResult";
 import math, {abs, det, re} from "mathjs";
-import Record from "@/pages/linear-algebra/class/Record"
+import Record from "@/class/linear-algebra-class/Record"
 
 class Matrix { 
   public static crammerRule(matrixA : number[][], matrixB : number[]) {

@@ -1,4 +1,4 @@
-import Matrix from "@/pages/linear-algebra/class/Matrix";
+import Matrix from "@/class/linear-algebra-class/Matrix";
 import { number } from "mathjs";
 
 export default class Interpolation {

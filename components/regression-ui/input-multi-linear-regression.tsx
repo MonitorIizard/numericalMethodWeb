@@ -6,11 +6,11 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Point from '@/pages/interpolation/class/Point';
+import Point from '@/class/interpolation-class/Point';
 import { useState, useEffect } from 'react';
 import { InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
-import Data from '@/pages/interpolation/class/Data';
+import Data from '@/class/interpolation-class/Data';
 
 type Props = {
 	setInputData?: (value: { data: Data[]; target: number[] }) => void;

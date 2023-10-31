@@ -2,18 +2,16 @@ import { Card, Button, TextField } from '@mui/material';
 import { InlineMath, BlockMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { useState } from 'react';
-import InputData from '@/pages/root-of-equation/Class/InputData';
+import InputData from '@/class/root-of-equation-class/InputData';
 
 type Props = {
 	isXtoEnd?: boolean;
   setInputData : (value : InputData) => void;
+	isSecantMethod?: boolean;
 };
 
-function Input({ isXtoEnd = true , setInputData }: Props) {
+function Input({ isXtoEnd = true , setInputData, isSecantMethod = false }: Props) {
   const [equation, setEquation] = useState<string>("exp(-x/4)*(2-x)-1");
-  const xStart = -1;
-  const xEnd = 2;
-  const errorTol = 0.00001;
 
   function onCalculate(e: any) {
     e.preventDefault();
@@ -49,62 +47,92 @@ function Input({ isXtoEnd = true , setInputData }: Props) {
 							onChange={(e) => {setEquation(e.target.value)}}
 							required
 						/>
-						{isXtoEnd ? (
+						{
+							isSecantMethod ?
 							<>
-								<div className="flex w-full gap-2">
-									<TextField
-										id="outlined-basic"
-										label="X start"
-										variant="outlined"
-										name="xstart"
-                    value={xStart}
-										fullWidth
-										required
-									/>
-									<TextField
-										id="outlined-basic"
-										label="X end"
-										variant="outlined"
-										name="xend"
-                    value={xEnd}
-										fullWidth
-										required
-									/>
-								</div>
-								<TextField
-									id="outlined-basic"
-									label="Tolerance"
-									variant="outlined"
-									name="errorTol"
-									fullWidth
-                  value={errorTol}
-									required
-								/>
-							</>
-						) : (
+							<div className="flex w-full gap-2">
+											<TextField
+												id="outlined-basic"
+												label="first x start"
+												variant="outlined"
+												name="xstart"
+												fullWidth
+												required
+											/>
+											<TextField
+												id="outlined-basic"
+												label="second x start"
+												variant="outlined"
+												name="xend"
+												fullWidth
+												required
+											/>
+										</div>
+										<TextField
+											id="outlined-basic"
+											label="Tolerance"
+											variant="outlined"
+											name="errorTol"
+											fullWidth
+											required
+										/>
+									</>
+							:
 							<>
-								<div className="flex w-full gap-2">
-									<TextField
-										id="outlined-basic"
-										label="X start"
-										variant="outlined"
-										name="xstart"
-										fullWidth
-                    value={xStart}
-										required
-									/>
-									<TextField
-										id="outlined-basic"
-										label="Tolerance"
-										variant="outlined"
-										name="errorTol"
-										fullWidth
-                    value={errorTol}
-										required
-									/>
-								</div>
+								{isXtoEnd ? (
+									<>
+										<div className="flex w-full gap-2">
+											<TextField
+												id="outlined-basic"
+												label="X start"
+												variant="outlined"
+												name="xstart"
+												fullWidth
+												required
+											/>
+											<TextField
+												id="outlined-basic"
+												label="X end"
+												variant="outlined"
+												name="xend"
+												fullWidth
+												required
+											/>
+										</div>
+										<TextField
+											id="outlined-basic"
+											label="Tolerance"
+											variant="outlined"
+											name="errorTol"
+											fullWidth
+											required
+										/>
+									</>
+								) : (
+									<>
+										<div className="flex w-full gap-2">
+											<TextField
+												id="outlined-basic"
+												label="X start"
+												variant="outlined"
+												name="xstart"
+												fullWidth
+												required
+											/>
+											<TextField
+												id="outlined-basic"
+												label="Tolerance"
+												variant="outlined"
+												name="errorTol"
+												fullWidth
+												required
+											/>
+										</div>
+									</>
+								)}
 							</>
-						)}
+						}
+						
 						<Button
 							variant="contained"
 							type="submit"

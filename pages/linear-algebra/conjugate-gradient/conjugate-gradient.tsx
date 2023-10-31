@@ -1,4 +1,4 @@
-import Matrix from "../class/Matrix";
+import Matrix from "../../../class/linear-algebra-class/Matrix";
 import MatrixUi from "./conjugate-gradient-ui";
 import { BlockMath, InlineMath } from 'react-katex';
 import Box from '@mui/material/Box';
