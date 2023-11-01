@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import Input from '../../components/derivative-ui/Input';
-import InputData from '../../class/derivative-class/InputData';
-import Derivative from '../../class/derivative-class/Derivative';
-import { DifferentiationResult } from '../../class/derivative-class/Derivative';
-import ShowSolution from '../../components/derivative-ui/show-solution';
+import Input from '../../components/derivative/Input';
+import InputData from '../../class/derivative/InputData';
+import Derivative from '../../class/derivative/Derivative';
+import { DifferentiationResult } from '../../class/derivative/Derivative';
+import ShowSolution from '../../components/derivative/show-solution';
 
 export default function Page() {
   const [data, setData] = useState<InputData>(new InputData(0, '', '', '', '', 0));

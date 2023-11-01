@@ -1,4 +1,4 @@
-import SetOfResult from "../class/root-of-equation-class/SetOfResult";
+import SetOfResult from "../class/root-of-equation/SetOfResult";
 
 type Column = {
 	id: keyof SetOfResult; //'iterationNo' | 'root' | 'tolerance'; => 

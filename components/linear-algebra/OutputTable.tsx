@@ -9,7 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
-import Record from '../../class/linear-algebra-class/Record';
+import Record from '../../class/linear-algebra/Record';
 
 interface PropsArguement {
 	result: Record[];

@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import SetOfResult from '../../class/root-of-equation-class/SetOfResult';
+import SetOfResult from '../../class/root-of-equation/SetOfResult';
 import ShowSolution from '@/components/ui/ShowSolution';
-import Column from '../../type/Column';
+import Column from '../../types/Column';
 import {isUndefined, log} from 'mathjs';
-import Graph from '@/components/interpolation-ui/graph';
-import StickyHeadTable from "./../../components/ui/dataTable";
+import Graph from '@/components/interpolation/graph';
+import StickyHeadTable from "../ui/dataTable";
 import Modal from '@/components/ui/Modal'
-import Input from '@/components/root-of-equa-ui/Input'
-import InputData from '../../class/root-of-equation-class/InputData';
-import Point from '@/class/interpolation-class/Point';
-import RootOfEquation from '../../class/root-of-equation-class/RootOfEquation';
-import Secant from '../../class/root-of-equation-class/Secant';
+import Input from '@/components/root-of-equation/Input'
+import InputData from '../../class/root-of-equation/InputData';
+import Point from '@/class/interpolation/Point';
+import RootOfEquation from '../../class/root-of-equation/RootOfEquation';
+import Secant from '../../class/root-of-equation/Secant';
 
 type Props = {
   closeEndSolver?: RootOfEquation;

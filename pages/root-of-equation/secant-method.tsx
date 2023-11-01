@@ -321,9 +321,9 @@
 
 // export default Page;
 
-import App from "./app";
-import Secant from "../../class/root-of-equation-class/Secant";
-import InputData from "../../class/root-of-equation-class/InputData";
+import App from "../../components/root-of-equation/app";
+import Secant from "../../class/root-of-equation/Secant";
+import InputData from "../../class/root-of-equation/InputData";
 
 export default function Page() {
 	const solver = new Secant({ inputData : InputData.createInputData('', 0, 0, 0), xStart2 : 0});

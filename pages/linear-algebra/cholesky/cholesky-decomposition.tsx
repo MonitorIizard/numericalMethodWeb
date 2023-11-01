@@ -1,4 +1,4 @@
-import Matrix from "../../../class/linear-algebra-class/Matrix";
+import Matrix from "../../../class/linear-algebra/Matrix";
 import Typography from '@mui/material/Typography';
 import { Button, Modal} from '@mui/material';
 import Box from '@mui/material/Box';

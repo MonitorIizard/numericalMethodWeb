@@ -7,7 +7,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import { useEffect, useState } from 'react';
-import InputData from '../../class/derivative-class/InputData';
+import InputData from '../../class/derivative/InputData';
 
 class Direction {
   label: string;

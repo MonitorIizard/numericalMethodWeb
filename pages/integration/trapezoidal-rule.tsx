@@ -1,10 +1,10 @@
-import InputData from '../../class/integration-class/InputData'
+import InputData from '../../class/integration/InputData'
 import { useEffect, useState } from 'react'
-import Trapezoidal from '../../class/integration-class/Trapezoidal';
-import Input from '../../components/integrated-ui/input'
-import ShowSolution from '@/components/integrated-ui/show-solution';
-import Graph from '@/components/integrated-ui/graph';
-import Point from '../../class/interpolation-class/Point';
+import Trapezoidal from '../../class/integration/Trapezoidal';
+import Input from '../../components/integrated/input'
+import ShowSolution from '@/components/integrated/show-solution';
+import Graph from '@/components/integrated/graph';
+import Point from '../../class/interpolation/Point';
 import { evaluate } from 'mathjs';
 
 export default function Page() {

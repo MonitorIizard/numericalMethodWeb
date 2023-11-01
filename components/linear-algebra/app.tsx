@@ -3,15 +3,16 @@ import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
-import ShowSolution from '../../../components/ui/ShowSolutionMatrix';
-import Record from '../../../class/linear-algebra/Record';
-import OutputTable from '../../../components/linear-algebra/OutputTable';
+import ShowSolution from '../ui/ShowSolutionMatrix';
+import Record from '../../class/linear-algebra/Record';
+import OutputTable from './OutputTable';
 
 type Props = {
+	solver?: (Ax: number[][], B: number[]) => number[];
 	iterator?: (Ax: number[][], B: number[], errorTol : number) => Record[];
 };
 
-function Matrix({ iterator }: Readonly<Props>) {
+function Matrix({ solver, iterator }: Readonly<Props>) {
 	const [dimension, setDimension] = useState<number>(2);
 	const [result, setResult] = useState<number[]>([]);
 	const [resultOfIteration, setResultOfIteration] = useState<Record[]>([]);
@@ -21,6 +22,7 @@ function Matrix({ iterator }: Readonly<Props>) {
 		[2, -4],
 		[0, 3]
 	]);
+	const [solutionClass, setSolutionClass] = useState<string>("hidden");
 	const [outputTableClass, setOutputTableClass] = useState<string>("hidden");
 	const [tolError, setTolError] = useState<number>(0.0001);
 
@@ -105,20 +107,25 @@ function Matrix({ iterator }: Readonly<Props>) {
 
 		const A = ax.map((row) => row.map(Number));
 		const B = matrixB.map(Number);
+		
+		if (solver) {
+			setResult(solver(A, B));
+			setMatrixX(solver(A, B));
+			setSolutionClass("block")
+		}
 
 		if (iterator) {
 			setResultOfIteration(iterator(A, B, tolError));
-      console.log( tolError );
 			setOutputTableClass("block")
 		}
 	}
 
 	return (
 		<>
-			<div className="mx-auto flex w-11/12 max-w-xl flex-col justify-center gap-4">
+			<div className="mx-auto flex w-11/12 max-w-3xl flex-col  gap-4 overflow-scroll">
 
 				<form action="">
-					<Card className="flex flex-col overflow-scroll p-8 gap-4">
+					<Card className="flex flex-col p-8 gap-4 overflow-scroll">
 						
 					<div className='mx-auto flex gap-4'>
 						<div className='my-auto'>
@@ -171,9 +178,9 @@ function Matrix({ iterator }: Readonly<Props>) {
 													name={`A${i}${j}`}
 													size="medium"
 													fullWidth
-													disabled={j < i}
+													required
 													type="number"
-													value={ax[j][i] = ax[i][j]}
+													value={ax[i][j]}
 													onChange={handleChange}
 												/>
 											</div>
@@ -249,6 +256,14 @@ function Matrix({ iterator }: Readonly<Props>) {
 						</Button>
 					</Card>
 				</form>
+
+				<div className={solver ? "visible" : "invisible"}>
+					<div className={`${solutionClass}`}>
+						<Card>
+							<ShowSolution results={result} isSolution={result.length == 0 || result.includes(NaN)? false : true}/>
+						</Card>
+					</div>
+				</div>
 
 				<div className={iterator ? "visible" : "invisible"}>
 					<div className={`${outputTableClass}`}>

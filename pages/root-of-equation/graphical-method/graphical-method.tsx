@@ -1,6 +1,6 @@
-import GraphicalMethod from "../../../class/root-of-equation-class/GraphicalMethod";
-import InputData from "../../../class/root-of-equation-class/InputData";
-import App from "../app";
+import GraphicalMethod from "../../../class/root-of-equation/GraphicalMethod";
+import InputData from "../../../class/root-of-equation/InputData";
+import App from "../../../components/root-of-equation/app";
 
 export default function Page() {
 	const solver = new GraphicalMethod(InputData.createInputData('', 0, 0, 0));

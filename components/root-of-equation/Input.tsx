@@ -1,8 +1,8 @@
 import { Card, Button, TextField } from '@mui/material';
-import { InlineMath, BlockMath } from 'react-katex';
+import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import { useState } from 'react';
-import InputData from '@/class/root-of-equation-class/InputData';
+import InputData from '@/class/root-of-equation/InputData';
 
 type Props = {
 	isXtoEnd?: boolean;
