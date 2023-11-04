@@ -57,7 +57,7 @@ export default function StickyHeadTable({ result, attributes }: PropsArguement) 
 										const value = row[attribute.id];
 										return (
 											<TableCell key={attribute.id} align={'center'}>
-												<InlineMath>{value.toString()}</InlineMath>
+												<InlineMath>{value == null ? "null" :value.toString()}</InlineMath>
 											</TableCell>
 										);
 									})}

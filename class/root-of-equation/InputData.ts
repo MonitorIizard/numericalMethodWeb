@@ -1,7 +1,7 @@
 export default class InputData {
 	equation : string;
 	xstart : number;
-	xend? : number;
+	xend? : number | null;
 	errorTol : number;
 
 	constructor( inputData : InputData) {

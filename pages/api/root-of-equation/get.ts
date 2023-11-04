@@ -14,12 +14,14 @@ const prisma = new PrismaClient();
 //     process.exit(1)
 //   })
 
-type Data = {
-	name: string;
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-	const linearData = await prisma.root_of_equation.findMany();
-	console.log(linearData);
-	res.status(200).json({ name: 'John Doe' });
+export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+  const { id } = req.query;
+  console.log(id);
+  const data = await prisma.root_of_equation.findMany({
+    where : {
+      id : Number(id)
+    }
+  });
+  console.log(data);
+  return res.status(200).json({ data : data });
 }

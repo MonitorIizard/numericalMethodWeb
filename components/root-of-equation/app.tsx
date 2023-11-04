@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
-import SetOfResult from '../../class/root-of-equation/SetOfResult';
-import ShowSolution from '@/components/ui/ShowSolution';
 import Column from '../../types/Column';
-import {isUndefined, log} from 'mathjs';
-import Graph from '@/components/interpolation/graph';
-import StickyHeadTable from "../ui/dataTable";
+import {evaluate, isUndefined, log} from 'mathjs';
 import Modal from '@/components/ui/Modal'
-import Input from '@/components/root-of-equation/Input'
-import InputData from '../../class/root-of-equation/InputData';
+import { useEffect, useRef, useState } from 'react';
 import Point from '@/class/interpolation/Point';
-import RootOfEquation from '../../class/root-of-equation/RootOfEquation';
+import HistoryIcon from '@mui/icons-material/History';
+import Graph from '@/components/interpolation/graph';
+import Input from '@/components/root-of-equation/Input'
+import ShowSolution from '@/components/ui/ShowSolution';
 import Secant from '../../class/root-of-equation/Secant';
+import History from '@/components/root-of-equation/history';
+import StickyHeadTable from "./../../components/ui/dataTable";
+import InputData from '../../class/root-of-equation/InputData';
+import SetOfResult from '../../class/root-of-equation/SetOfResult';
+import RootOfEquation from '../../class/root-of-equation/RootOfEquation';
 
 type Props = {
   closeEndSolver?: RootOfEquation;
@@ -19,13 +21,17 @@ type Props = {
 }
 
 function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
-	const [answer, setAnswer] = useState<number>(0);
-	const [result, setResult] = useState<SetOfResult[]>([]);
-	const [graph, setGraph] = useState<Point[]>([]);
-	const [open, setOpen] = useState(false);
-	const [inputData, setInputData] = useState<InputData>( InputData.createInputData('', 0, 0, 0));
-	const [isShow, setIsShow] = useState(false);
+	const [y , setY] = useState(0);
 	let solver : Secant | RootOfEquation;
+	const [open, setOpen] = useState(false);
+	const [isShow, setIsShow] = useState(false);
+	const [graph, setGraph] = useState<Point[]>([]);
+	const [answer, setAnswer] = useState<number>(NaN);
+	const [result, setResult] = useState<SetOfResult[]>([]);
+	const [inputData, setInputData] = useState<InputData>( InputData.createInputData('', 0, 0, 0));
+	const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+	const [id, setId] = useState<string | null>(null);
+	
 
 	if ( !closeEndSolver && !openEndSolver ) {
 		solver  = secantSolver!;
@@ -45,9 +51,27 @@ function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
 		{ id: 'tolerance', label: 'Tolerance' }
 	];
 
+	async function createRecord(){
+			const response = await fetch('/api/root-of-equation/add', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({"equation" : inputData.equation,
+														  "x_start" : JSON.stringify([inputData.xstart]),
+															"x_end" : inputData.xend,
+															"tolerance" : inputData.errorTol,
+															"graph" : JSON.stringify(graph),
+															"answer" : answer,
+															"result" : JSON.stringify(result),
+															"type" : solver.constructor.name,
+															"isOpenMethod" : openEndSolver ? true : false,
+														 })
+			})
+	}
+	
 	useEffect(() => {
 		if (inputData.equation === '') {
-			console.log('return');
 			return;
 		}
 
@@ -89,10 +113,54 @@ function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
 		
 		setIsShow(true);
 
+		console.log(inputData);
 	}, [inputData]);
 
+	useEffect(() => { 
+		if (result.length == 0 || inputData.equation === '') {
+			return;
+		}
+
+		createRecord();
+	}
+	,[result, answer, graph]);
+
+	async function getRecord() {
+		const queryParameters = new URLSearchParams(window.location.search);
+		const id = queryParameters.get('id');
+
+		if ( id !== null ) {
+			const res = await fetch('/api/root-of-equation/get?' + new URLSearchParams({
+				id : id!
+			}).toString(), {
+				method : "GET",
+			})
+	
+			const json = await res.json();
+			const data = json.data[0];
+			setGraph( data.graph );
+			setResult( data.result );
+			setAnswer( data.answer );
+			setY( evaluate(data.equation, {x : data.answer}) );
+	}
+}
+
+	useEffect(() => {
+			getRecord();
+			setIsShow(true);
+	}, [id])
+
+	useEffect(() => {
+		const queryParameters = new URLSearchParams(window.location.search);
+		const id = queryParameters.get('id');
+		setId(id);
+	})
+
 	return (
-		<div className="mx-auto flex w-11/12 max-w-xl flex-col gap-4 text-xl items-center">
+		<div className="mx-auto flex w-11/12 max-w-xl flex-col gap-4 text-xl items-center relative">
+			<div className=' absolute right-10 top-10 -translate-y-1/2' onClick={() => setIsHistoryOpen((prev)=> !prev)}>
+				<HistoryIcon className='fill-black '/>
+			</div>
 
 			<Input setInputData={setInputData} isXtoEnd={!isUndefined(closeEndSolver)} isSecantMethod={!isUndefined(secantSolver)}/>
 
@@ -104,11 +172,15 @@ function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
 				<ShowSolution answer={answer} isSolution={!(result.length === 1000)}/>
 			</div>
 
-			<Graph graph={graph} answerPoint={new Point([answer], solver!.f(answer))}/>
+			<Graph graph={graph} answerPoint={new Point([answer], solver!.f(answer) || y)}/>
 			</>
 			}
 
 			<Modal open={open} setOpen={setOpen} modalContent={modalContent}/>
+
+			<History isOpen={isHistoryOpen}
+							 setOpen={setIsHistoryOpen}/>
+			
 		</div>
 	);
 }

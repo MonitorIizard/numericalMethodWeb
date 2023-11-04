@@ -321,7 +321,7 @@ export default function Page() {
 	return (
 		<div>
 			<h1 className="my-8 text-center text-3xl font-bold text-black">Newton Rophson Method</h1>
-			<App closeEndSolver={solver}></App>
+			<App openEndSolver={solver}></App>
 		</div>
 	)
 }
