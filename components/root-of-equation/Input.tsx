@@ -53,7 +53,7 @@ function Input({ isXtoEnd = true , setInputData, isSecantMethod = false }: Props
 			setDefaultValue({
 				equation : data.equation,
 				xstart : data.x_start[0].toString(),
-				xend : data.x_end.toString(),
+				xend : data.x_end === null ? "null" : data.x_end.toString(),
 				errorTol : data.tolerance.toString()
 			});
 			setEquation(data.equation);
@@ -102,6 +102,8 @@ useEffect(() => {
 												name="xstart"
 												fullWidth
 												required
+												value={defaultValue.xstart}
+												onChange={(e) => {setDefaultValue({...defaultValue, xstart : e.target.value})}}
 											/>
 											<TextField
 												id="outlined-basic"
@@ -110,6 +112,8 @@ useEffect(() => {
 												name="xend"
 												fullWidth
 												required
+												value={defaultValue.xend}
+												onChange={(e) => {setDefaultValue({...defaultValue, xend : e.target.value})}}
 											/>
 										</div>
 										<TextField
@@ -119,6 +123,8 @@ useEffect(() => {
 											name="errorTol"
 											fullWidth
 											required
+											value={defaultValue.errorTol}
+											onChange={(e) => {setDefaultValue({...defaultValue, errorTol : e.target.value})}}
 										/>
 									</>
 							:
@@ -168,6 +174,8 @@ useEffect(() => {
 												name="xstart"
 												fullWidth
 												required
+												value={defaultValue.xstart}
+												onChange={(e) => {setDefaultValue({...defaultValue, xstart : e.target.value})}}
 											/>
 											<TextField
 												id="outlined-basic"
@@ -176,6 +184,8 @@ useEffect(() => {
 												name="errorTol"
 												fullWidth
 												required
+												value={defaultValue.errorTol}
+												onChange={(e) => {setDefaultValue({...defaultValue, errorTol : e.target.value})}}
 											/>
 										</div>
 									</>

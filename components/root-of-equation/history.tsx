@@ -45,8 +45,9 @@ export default function Page({isOpen, setOpen} : {isOpen : boolean, setOpen : (i
               onClose={() => setOpen(!isOpen)}
               aria-labelledby="child-modal-title"
               aria-describedby="child-modal-description"
-              className='overflow-scroll'>
+              className='overflow-scroll pt-20'>
         <Card className={`w-11/12 max-w-md text-md mx-auto `}>
+          <h1 className='border-solid border-2 border-black text-4xl text-center font-bold py-4'>History</h1>
           <ul>
               {
                 data.map( (row, idx) =>
@@ -56,9 +57,16 @@ export default function Page({isOpen, setOpen} : {isOpen : boolean, setOpen : (i
                     <br />
                     <InlineMath>{`x_{start} = ${row.x_start[0]}`}</InlineMath>
                     <br />
-                    <InlineMath>{`x_{end} = ${row.x_end}`}</InlineMath>
-                    <br />
+                    {
+                      row.x_end !== null &&
+                      <>
+                        <InlineMath>{`x_{end} = ${row.x_end}`}</InlineMath>
+                        <br />
+                      </>
+                    }
                     <InlineMath>{`tolerance = ${row.tolerance}`}</InlineMath>
+                    <br />
+                    <InlineMath>{`answer = ${row.answer}`}</InlineMath>
                     <br />
                   </div>
                   <ThemeProvider theme={ theme }>

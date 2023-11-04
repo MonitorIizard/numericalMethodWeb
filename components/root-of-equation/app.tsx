@@ -141,7 +141,12 @@ function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
 			setGraph( data.graph );
 			setResult( data.result );
 			setAnswer( data.answer );
-			setY( evaluate(data.equation, {x : data.answer}) );
+			
+			try {
+				setY( evaluate(data.equation, {x : data.answer}) );
+			} catch(e) {
+				setY( NaN );
+			}
 	}
 }
 

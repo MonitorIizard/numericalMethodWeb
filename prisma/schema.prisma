@@ -14,7 +14,7 @@ model root_of_equation {
   id Int @id @default(autoincrement())
   time DateTime @default(now())
   equation String
-  answer Float
+  answer Float?
   graph Json
   isOpenMethod Boolean @default(false)
   x_start Json

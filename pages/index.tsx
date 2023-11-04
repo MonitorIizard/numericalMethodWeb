@@ -18,9 +18,9 @@ function Page() {
 		{id:"1", name: 'Graphical Method', link: './root-of-equation/graphical-method?type=GraphicalMethod'},
 		{id:"2", name: 'Bisection Method', link: './root-of-equation/bisection-method?type=BisectionMethod'},
 		{id:"3", name: 'False Position', link: './root-of-equation/false-position-method?type=FalsePositionMethod'},
-		{id:"4", name: 'One Point Iteration', link: './root-of-equation/one-point-iteration-method?type=OnePointIterationMethod'},
+		{id:"4", name: 'One Point Iteration', link: './root-of-equation/one-point-iteration-method?type=OnePointIteration'},
 		{id:"5", name: 'Newton Raphson', link: './root-of-equation/newton-rophson-method?type=NewtonRaphsonMethod'},
-		{id:"6", name: 'Secant', link: './root-of-equation/secant-method'},];
+		{id:"6", name: 'Secant', link: './root-of-equation/secant-method?type=Secant'},];
 
 	let InterpolationLink = [
 		{id:"1", name: 'Newton Divide Difference', link: './interpolation/newton-divided-difference'},
