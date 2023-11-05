@@ -1,10 +1,10 @@
-import Matrix from "../../../class/linear-algebra/Matrix";
+import Matrix from "../../class/linear-algebra/Matrix";
 import Typography from '@mui/material/Typography';
 import { Button, Modal} from '@mui/material';
 import Box from '@mui/material/Box';
 import { useState } from "react";
 import { BlockMath, InlineMath } from 'react-katex';
-import CholeskyUi from "./cholesky-ui";
+import CholeskyUi from "../../components/linear-algebra/cholesky-ui";
 
 function Page() {
   const [openNotify, setOpenNotify] = useState<boolean>(true);
@@ -25,7 +25,7 @@ function Page() {
     <>
       <h1 className="my-8 text-center text-3xl font-bold">Cholesky Decomposition</h1>
       <CholeskyUi solver={Matrix.cholesky}/>
-      <Modal
+      {/* <Modal
 					open={openNotify}
 					onClose={(e) => setOpenNotify(false)}
 					aria-labelledby="modal-modal-title"
@@ -72,7 +72,7 @@ function Page() {
 							</Button>
 						</div>
 					</Box>
-				</Modal>
+				</Modal> */}
     </>
   )
 }

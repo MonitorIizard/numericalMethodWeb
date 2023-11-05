@@ -23,3 +23,15 @@ model root_of_equation {
   tolerance Float
   type String
 }
+
+model linear_algebra {
+  id Int @id @default(autoincrement())
+  time DateTime @default(now())
+  dimension Int
+  matrixA Json
+  matrixB Json
+  matrixX Json
+  error_criteria Float?
+  result Json @default("{}")
+  type String
+}

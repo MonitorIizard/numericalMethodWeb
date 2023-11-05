@@ -20,7 +20,7 @@ export default function Page ({results, isSolution} : Props ) {
           { results.map( (ans, idx) => {
             return (
               <span key={idx}>
-                <InlineMath>{`x_${idx}=${ans.toString()}`}</InlineMath>
+                <InlineMath>{`x_${idx}=${ ans == null ? "no answer" : ans.toString()}`}</InlineMath>
                 <br />
               </span>
             )

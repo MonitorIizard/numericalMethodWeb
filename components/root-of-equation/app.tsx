@@ -163,8 +163,8 @@ function Page({closeEndSolver, openEndSolver, secantSolver } : Props) {
 
 	return (
 		<div className="mx-auto flex w-11/12 max-w-xl flex-col gap-4 text-xl items-center relative">
-			<div className=' absolute right-10 top-10 -translate-y-1/2' onClick={() => setIsHistoryOpen((prev)=> !prev)}>
-				<HistoryIcon className='fill-black '/>
+			<div className=' absolute right-10 top-10 -translate-y-1/2 cursor-pointer' onClick={() => setIsHistoryOpen((prev)=> !prev)}>
+				<HistoryIcon className='fill-black'/>
 			</div>
 
 			<Input setInputData={setInputData} isXtoEnd={!isUndefined(closeEndSolver)} isSecantMethod={!isUndefined(secantSolver)}/>

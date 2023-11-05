@@ -1,11 +1,13 @@
 import { Button, Card, TextField } from '@mui/material';
-import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react';
+import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
+import HistoryIcon from '@mui/icons-material/History';
 import 'katex/dist/katex.min.css';
 import ShowSolution from '../ui/ShowSolutionMatrix';
 import Record from '../../class/linear-algebra/Record';
 import OutputTable from './OutputTable';
+import History from './history';
 
 type Props = {
 	solver?: (Ax: number[][], B: number[]) => number[];
@@ -25,6 +27,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 	const [solutionClass, setSolutionClass] = useState<string>("hidden");
 	const [outputTableClass, setOutputTableClass] = useState<string>("hidden");
 	const [tolError, setTolError] = useState<number>(0.0001);
+	const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -110,7 +113,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 		
 		if (solver) {
 			setResult(solver(A, B));
-			setMatrixX(solver(A, B));
+			setMatrixX(() => solver(A, B).map(answer => Number(answer.toFixed(4))));
 			setSolutionClass("block")
 		}
 
@@ -118,16 +121,84 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 			setResultOfIteration(iterator(A, B, tolError));
 			setOutputTableClass("block")
 		}
+
 	}
+
+	async function createRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		if (result.length == 0 && resultOfIteration.length == 0) return;
+
+		console.log("createRecord");
+		console.log(resultOfIteration);
+		const res = await fetch('/api/linear-algebra/add', {
+			method: 'POST',
+			body : JSON.stringify({
+				dimension : dimension,
+				matrixA : ax,
+				matrixB : matrixB,
+				matrixX : solver ? result.map((value) => Number(value.toFixed(4))) : resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => Number(record.value.toFixed(4)) ),
+				errorCriteria : iterator ? tolError : null,
+				result : iterator ? resultOfIteration : {},
+				type : type
+			})
+		})
+	}
+
+	async function getRecord() {
+		const id =  new URLSearchParams(window.location.search).get('id');
+
+		console.log(id);
+
+		if ( id == null ) return;
+
+		const res = await fetch('/api/linear-algebra/get?id=' + id, {
+			method: 'GET',
+		})
+
+		if (res.status != 200) return;
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		setDimension(data.dimension);
+		setAx(data.matrixA);
+		setMatrixB(data.matrixB);
+		setMatrixX(data.matrixX);
+		setResult(data.matrixX);
+
+		if (iterator) {
+			setTolError(data.error_criteria);
+			setResultOfIteration(data.result);
+		}
+	}
+
+	useEffect(() => {
+		createRecord();
+	}, [result, resultOfIteration])
+
+	useEffect(() => {
+		getRecord();
+
+		if( iterator ) {
+			setOutputTableClass("block");
+		} else {
+			setSolutionClass("block");
+		}
+	}, [typeof window !== "undefined" ? new URLSearchParams(window.location.search).get('id') : ""])
 
 	return (
 		<>
 			<div className="mx-auto flex w-11/12 max-w-3xl flex-col  gap-4 overflow-scroll">
 
 				<form action="">
-					<Card className="flex flex-col p-8 gap-4 overflow-scroll">
+					<Card className="flex flex-col p-8 gap-4 overflow-scroll relative">
 						
 					<div className='mx-auto flex gap-4'>
+					<div className=' absolute right-10 top-10 -translate-y-1/2' onClick={() => setIsHistoryOpen((prev)=> !prev)}>
+						<HistoryIcon className='fill-black '/>
+					</div>
+
 						<div className='my-auto'>
 							<InlineMath>Dimension = </InlineMath>
 						</div>
@@ -237,6 +308,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 											fullWidth
 											required
 											type="number"
+											value={tolError}
 											onChange={handleChange}
 										/>
 							</div>
@@ -257,7 +329,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 					</Card>
 				</form>
 
-				<div className={solver ? "visible" : "invisible"}>
+				<div className={solver ? "block" : "hidden"}>
 					<div className={`${solutionClass}`}>
 						<Card>
 							<ShowSolution results={result} isSolution={result.length == 0 || result.includes(NaN)? false : true}/>
@@ -265,7 +337,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 					</div>
 				</div>
 
-				<div className={iterator ? "visible" : "invisible"}>
+				<div className={iterator ? "block" : "hidden"}>
 					<div className={`${outputTableClass}`}>
 						<div className='my-4 py-4'>
 								<ShowSolution results={resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => record.value )} isSolution={resultOfIteration.length == 0 || resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => record.value ).includes(NaN) ? false : true}/>
@@ -278,6 +350,8 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 				</div>
 
 			</div>
+
+			<History isOpen={isHistoryOpen} setOpen={setIsHistoryOpen}/>
 		</>
 	);
 }

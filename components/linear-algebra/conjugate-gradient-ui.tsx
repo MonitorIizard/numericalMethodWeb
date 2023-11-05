@@ -1,11 +1,13 @@
 import { Button, Card, TextField } from '@mui/material';
-import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react';
+import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
-import ShowSolution from '../../../components/ui/ShowSolutionMatrix';
-import Record from '../../../class/linear-algebra/Record';
-import OutputTable from '../../../components/linear-algebra/OutputTable';
+import ShowSolution from '../ui/ShowSolutionMatrix';
+import Record from '../../class/linear-algebra/Record';
+import OutputTable from './OutputTable';
+import History from './history';
+import HistoryIcon from '@mui/icons-material/History';
 
 type Props = {
 	iterator?: (Ax: number[][], B: number[], errorTol : number) => Record[];
@@ -23,6 +25,7 @@ function Matrix({ iterator }: Readonly<Props>) {
 	]);
 	const [outputTableClass, setOutputTableClass] = useState<string>("hidden");
 	const [tolError, setTolError] = useState<number>(0.0001);
+	const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -113,12 +116,75 @@ function Matrix({ iterator }: Readonly<Props>) {
 		}
 	}
 
+	async function createRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		console.log(resultOfIteration);
+
+		if (resultOfIteration.length == 0) return;
+
+		console.log("createRecord");
+		console.log(tolError);
+		const res = await fetch('/api/linear-algebra/add', {
+			method: 'POST',
+			body : JSON.stringify({
+				dimension : dimension,
+				matrixA : ax,
+				matrixB : matrixB,
+				matrixX : resultOfIteration.slice(resultOfIteration.length - dimension).map((record) => Number(record.value.toFixed(4)) ),
+				errorCriteria :  tolError,
+				result : resultOfIteration,
+				type : type
+			})
+		})
+	}
+
+	async function getRecord() {
+		const id =  new URLSearchParams(window.location.search).get('id');
+
+		if ( id == null ) return;
+
+		const res = await fetch('/api/linear-algebra/get?id=' + id, {
+			method: 'GET',
+		})
+
+		if (res.status != 200) return;
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		setDimension(data.dimension);
+		setAx(data.matrixA);
+		setMatrixB(data.matrixB);
+		setMatrixX(data.matrixX);
+		setResult(data.matrixX);
+
+		if (iterator) {
+			setTolError(data.error_criteria);
+			setResultOfIteration(data.result);
+			// console.log(data.result);
+		}
+	}
+
+	useEffect(() => {
+		createRecord();
+	}, [resultOfIteration])
+
+	useEffect(() => {
+		getRecord();
+		setOutputTableClass("block");
+	}, [typeof window !== "undefined" ? new URLSearchParams(window.location.search).get('id') : ""])
+
 	return (
 		<>
 			<div className="mx-auto flex w-11/12 max-w-xl flex-col justify-center gap-4">
 
 				<form action="">
-					<Card className="flex flex-col overflow-scroll p-8 gap-4">
+					<Card className="flex flex-col overflow-scroll p-8 gap-4 relative">
+					
+					<div className=' absolute right-10 top-10 -translate-y-1/2' onClick={() => setIsHistoryOpen((prev)=> !prev)}>
+							<HistoryIcon className='fill-black '/>
+					</div>
 						
 					<div className='mx-auto flex gap-4'>
 						<div className='my-auto'>
@@ -230,6 +296,7 @@ function Matrix({ iterator }: Readonly<Props>) {
 											fullWidth
 											required
 											type="number"
+											value={tolError}
 											onChange={handleChange}
 										/>
 							</div>
@@ -263,6 +330,9 @@ function Matrix({ iterator }: Readonly<Props>) {
 				</div>
 
 			</div>
+
+			<History isOpen={isHistoryOpen} setOpen={setIsHistoryOpen} />
+
 		</>
 	);
 }

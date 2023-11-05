@@ -1,9 +1,11 @@
 import { Button, Card, TextField } from '@mui/material';
-import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react';
+import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 import 'katex/dist/katex.min.css';
-import ShowSolution from '../../../components/ui/ShowSolutionMatrix';
+import ShowSolution from '../ui/ShowSolutionMatrix';
+import HistoryIcon from '@mui/icons-material/History';
+import History from './history';
 
 type Props = {
 	solver?: (Ax: number[][], B: number[]) => number[];
@@ -19,6 +21,7 @@ function Matrix({ solver }: Readonly<Props>) {
 		[0, 3]
 	]);
 	const [solutionClass, setSolutionClass] = useState<string>("hidden");
+	const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
@@ -108,14 +111,69 @@ function Matrix({ solver }: Readonly<Props>) {
 
 	}
 
+	async function createRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		if (result.length == 0 ) return;
+
+		console.log("createRecord");
+		const res = await fetch('/api/linear-algebra/add', {
+			method: 'POST',
+			body : JSON.stringify({
+				dimension : dimension,
+				matrixA : ax,
+				matrixB : matrixB,
+				matrixX : result.map((value) => value == null ? null : Number(value.toFixed(4))),
+				errorCriteria : null,
+				result : {},
+				type : type
+			})
+		})
+	}
+
+	async function getRecord() {
+		const id =  new URLSearchParams(window.location.search).get('id');
+
+		if ( id == null ) return;
+
+		const res = await fetch('/api/linear-algebra/get?id=' + id, {
+			method: 'GET',
+		})
+
+		if (res.status != 200) return;
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		setDimension(data.dimension);
+		setAx(data.matrixA);
+		setMatrixB(data.matrixB);
+		setMatrixX(data.matrixX);
+		setResult(data.matrixX);
+	}
+
+	useEffect(() => {
+		createRecord();
+	}, [result])
+
+	useEffect(() => {
+		getRecord();
+		setSolutionClass("block");
+	}, [typeof window !== "undefined" ? new URLSearchParams(window.location.search).get('id') : ""])
+
+
 	return (
 		<>
 			<div className="mx-auto flex w-11/12 max-w-xl flex-col justify-center gap-4">
 
 				<form action="">
-					<Card className="flex flex-col overflow-scroll p-8 gap-4">
+					<Card className="flex flex-col overflow-scroll p-8 gap-4 relative">
 						
 					<div className='mx-auto flex gap-4'>
+						<div className=' absolute right-10 top-10 -translate-y-1/2' onClick={() => setIsHistoryOpen((prev)=> !prev)}>
+							<HistoryIcon className='fill-black '/>
+						</div>
+
 						<div className='my-auto'>
 							<InlineMath>Dimension = </InlineMath>
 						</div>
@@ -239,8 +297,12 @@ function Matrix({ solver }: Readonly<Props>) {
 
 
 			</div>
+			<History isOpen={isHistoryOpen} setOpen={setIsHistoryOpen} />
 		</>
 	);
+
+	
+	
 }
 
 export default Matrix;

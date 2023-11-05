@@ -3,15 +3,15 @@ import Link from 'next/link';
 
 function Page() {
 	let LinerAlgebraLink = [
-		{id:"1L", name: 'Crammer Rule', link: './linear-algebra/crammer-rule'},
-		{id:"2L", name: 'Gauss Elimination', link: './linear-algebra/gauss-elimination'},
-		{id:"3L", name: 'Gauss Jordan', link: './linear-algebra/gauss-jordan'},
-		{id:"4L", name: 'Matrix Inversion', link: './linear-algebra/matrix-inversion'},
-		{id:"5L", name: 'LU Decomposition', link: './linear-algebra/lu-decomposition'},
-		{id:"6L", name: 'Cholesky Decomposition', link: './linear-algebra/cholesky/cholesky-decomposition'},
-		{id:"7L", name: 'Jacobi Iteration', link: './linear-algebra/jacobi-iter-method'},
-		{id:"8L", name: 'GaussSeide lIteration', link: './linear-algebra/gauss-seidel-iteration'},
-		{id:"9L", name: 'ConjugateGradient', link: './linear-algebra/conjugate-gradient/conjugate-gradient'},
+		{id:"1L", name: 'Crammer Rule', link: './linear-algebra/crammer-rule?type=CrammerRule'},
+		{id:"2L", name: 'Gauss Elimination', link: './linear-algebra/gauss-elimination?type=GaussElimination'},
+		{id:"3L", name: 'Gauss Jordan', link: './linear-algebra/gauss-jordan?type=GaussJordan'},
+		{id:"4L", name: 'Matrix Inversion', link: './linear-algebra/matrix-inversion?type=MatrixInversion'},
+		{id:"5L", name: 'LU Decomposition', link: './linear-algebra/lu-decomposition?type=LUDecomposition'},
+		{id:"6L", name: 'Cholesky Decomposition', link: './linear-algebra/cholesky-decomposition?type=CholeskyDecomposition'},
+		{id:"7L", name: 'Jacobi Iteration', link: './linear-algebra/jacobi-iter-method?type=JacobiIteration'},
+		{id:"8L", name: 'GaussSeide lIteration', link: './linear-algebra/gauss-seidel-iteration?type=GaussSeidelIteration'},
+		{id:"9L", name: 'ConjugateGradient', link: './linear-algebra/conjugate-gradient?type=ConjugateGradient'},
 	]
 
 	let RootOfEquationLink = [

@@ -3,7 +3,7 @@ import InputData from "./InputData";
 abstract class RootOfEquation {
 	xStart: number = 0;
 	es: number = 0;
-	xEnd?: number = 0;
+	xEnd?: number | null = 0;
 	equation: string = "";
 
 	constructor(equation : string, xStart: number, es: number, xEnd?: number ) {

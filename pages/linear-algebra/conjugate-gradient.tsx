@@ -1,5 +1,5 @@
-import Matrix from "../../../class/linear-algebra/Matrix";
-import MatrixUi from "./conjugate-gradient-ui";
+import Matrix from "../../class/linear-algebra/Matrix";
+import MatrixUi from "../../components/linear-algebra/conjugate-gradient-ui";
 import { BlockMath, InlineMath } from 'react-katex';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -25,7 +25,7 @@ function Page() {
     <>
       <h1 className="my-8 text-center text-3xl font-bold">Conjugate Gradient</h1>
       <MatrixUi iterator={Matrix.conjugateGradient} />
-      <Modal
+      {/* <Modal
 					open={openNotify}
 					onClose={(e) => setOpenNotify(false)}
 					aria-labelledby="modal-modal-title"
@@ -72,7 +72,7 @@ function Page() {
 							</Button>
 						</div>
 					</Box>
-				</Modal>
+				</Modal> */}
     </>
   )
 }
