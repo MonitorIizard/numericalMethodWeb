@@ -56,7 +56,14 @@ export default function Page({isOpen, setOpen} : {isOpen : boolean, setOpen : (i
                 data.map(record => {
                 return (
                 <li className='relative border-solid border-2 border-t-0 border-black p-4' key={record.id}>
-                  <InlineMath>{`\\text{Date : ${record.time.slice(0,10)} } \\text{Time : ${record.time.slice(11, 20)}}`}</InlineMath>
+                  <InlineMath>{`\\text{${new Date(record.time).toLocaleDateString('EN-th', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric'
+                  })}}`}</InlineMath>
                   <br />
                   <InlineMath>{`Dimension = ${record.dimension}`}</InlineMath>
                   <br /><br />

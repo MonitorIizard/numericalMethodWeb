@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Graph from '@/components/interpolation/graph';
 import Input from '@/components/interpolation/input';
 import ShowSolution from '@/components/interpolation/show-solution';
-import { number } from 'mathjs';
 import Point from '../../class/interpolation/Point';
 
 type InputData = {
@@ -19,7 +18,6 @@ export default function Page() {
 	const [graph, setGraph] = useState<Point[]>([]);
 	const [largrangGraph, setLargrangGraph] = useState<Point[][]>([]);
 	const [xToFind, setXToFind] = useState<number>(0);
-	const [step, setStep] = useState<number>(0);
 
 	function calculateGraph() {
 		if (givenData.length === 0) {
@@ -75,15 +73,11 @@ export default function Page() {
 				) {
           
           let fx = 0;
-          // find L for each x
           let l = 1;
           for( let k = 0; k < n; k++ ) {
             if (k == i) continue;
             l *= (j - setOfx[k]) / (setOfx[i] - setOfx[k]);
-                    //console.log(`j${j} - ${setOfx[k]} / ${setOfx[i]} - ${setOfx[k]}`)
           }
-          // console.log(`setOfy[i] = ${setOfy[i]}`)
-          // console.log(`l = ${l}`)
           fx += l * setOfy[i];
           const x = j;
 					const y = fx;
@@ -117,6 +111,80 @@ export default function Page() {
 		}
 		count.current++;
 	}, [inputData]);
+
+	async function createRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		if (type === null) return;
+
+		const res = await fetch('http://localhost:3000/api/interpolation/add', {
+			method: 'POST',
+			body: JSON.stringify({
+				numberOfPoint: givenData.length,
+				x: givenData.map((data) => data.x[0]),
+				y: givenData.map((data) => data.y),
+				xToFind: xToFind,
+				answer: answer,
+				data: givenData,
+				target: xToFind,
+				graph: graph,
+				type: type
+			})
+		});
+	}
+
+	useEffect(() => {
+		if (Number.isNaN(answer)) return;
+		createRecord();
+	}, [answer]);
+
+	async function fetchSolution() {
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const res = await fetch(
+			'http://localhost:3000/api/interpolation/get?' +
+				new URLSearchParams({
+					id: id
+				}).toString(),
+			{
+				method: 'GET'
+			}
+		);
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		return data;
+	}
+
+	useEffect(() => {
+		const setResourceData = async () => {
+			const id = new URLSearchParams(window.location.search).get('id');
+			if (id === null) return;
+
+			const data = await fetchSolution();
+			let x = data.x;
+			let y = data.y;
+			let answer = data.answer;
+			let graph = data.graph;
+			let numPoint = data.numberOfPoint;
+			let target = data.xToFind;
+
+			setGraph(graph);
+			setAnswer(answer);
+			setXToFind(target);
+			let structureDataFetch = Array.from(
+				{ length: numPoint },
+				(_, idx) => new Point([x[idx]], y[idx])
+			);
+
+			setGivenData(structureDataFetch);
+		};
+
+		setResourceData();
+	}, [typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '']);
 
 	// console.log(graph);
 	return (

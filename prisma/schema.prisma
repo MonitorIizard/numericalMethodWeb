@@ -35,3 +35,15 @@ model linear_algebra {
   result Json @default("{}")
   type String
 }
+
+model interpolation {
+  id Int @id @default(autoincrement())
+  time DateTime @default(now())
+  numberOfPoint Int
+  x Json
+  y Json
+  xToFind Float
+  answer Float
+  graph Json
+  type String
+}

@@ -9,6 +9,7 @@ import Record from '../../class/linear-algebra/Record';
 import OutputTable from './OutputTable';
 import History from './history';
 
+
 type Props = {
 	solver?: (Ax: number[][], B: number[]) => number[];
 	iterator?: (Ax: number[][], B: number[], errorTol : number) => Record[];
@@ -174,6 +175,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 	}
 
 	useEffect(() => {
+		if ( result == null || result.length == 0 || result.includes(NaN) ) return;
 		createRecord();
 	}, [result, resultOfIteration])
 
@@ -352,6 +354,7 @@ function Matrix({ solver, iterator }: Readonly<Props>) {
 			</div>
 
 			<History isOpen={isHistoryOpen} setOpen={setIsHistoryOpen}/>
+			
 		</>
 	);
 }

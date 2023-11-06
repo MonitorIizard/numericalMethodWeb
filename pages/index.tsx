@@ -23,9 +23,9 @@ function Page() {
 		{id:"6", name: 'Secant', link: './root-of-equation/secant-method?type=Secant'},];
 
 	let InterpolationLink = [
-		{id:"1", name: 'Newton Divide Difference', link: './interpolation/newton-divided-difference'},
-		{id:"2", name: 'Lagrange', link: './interpolation/lagrange'},
-		{id:"3", name: 'Spline', link: './interpolation/spline'}
+		{id:"1", name: 'Newton Divide Difference', link: './interpolation/newton-divided-difference?type=NewtonDivideDifference'},
+		{id:"2", name: 'Lagrange', link: './interpolation/lagrange?type=Lagrange'},
+		{id:"3", name: 'Spline', link: './interpolation/spline?type=Spline'}
 	]
 
 	let regressionLink = [
