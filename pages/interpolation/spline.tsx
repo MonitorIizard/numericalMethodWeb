@@ -6,6 +6,7 @@ import Data from '../../class/interpolation/Data';
 import Point from '../../class/interpolation/Point';
 import { Button, Card } from '@mui/material';
 import Interpolation from '../../class/interpolation/Interpolation';
+import { NextLinkComposed } from '../../src/Link';
 
 type InputData = {
 	data: Data[];
@@ -13,13 +14,14 @@ type InputData = {
 };
 
 export default function Page() {
-	const [answer, setAnswer] = useState<number>(0);
+	const [answer, setAnswer] = useState<number>(NaN);
 	const [inputData, setInputData] = useState<InputData>({ data: [], target: 0 });
 	const [givenData, setGivenData] = useState<Point[]>([]);
 	const [graph, setGraph] = useState<Point[]>([]);
 	const [xToFind, setXToFind] = useState<number>(0);
-	const [method, setMethod] = useState<number>(0);
+	const [method, setMethod] = useState<number>(-1);
 	const methodMenu = ['Linear', 'Quadratic', 'Cubric'];
+	const pathName = useRef<string[]>([]);
 
 	useEffect(() => {
 		let data = inputData.data.map((element) => element.point);
@@ -135,7 +137,78 @@ export default function Page() {
 				return next;
 			});
 		}
-	}, [givenData, xToFind, method]);
+	}, [givenData, xToFind]);
+
+	async function writeRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		if (isNaN(answer)) return;
+
+		const res = await fetch('/api/interpolation/add', {
+			method: 'POST',
+			body: JSON.stringify({
+				numberOfPoint: givenData.length,
+				x: givenData.map((point) => point.x[0]),
+				y: givenData.map((point) => point.y),
+				xToFind: Number(xToFind),
+				answer: answer,
+				graph: graph,
+				type: type
+			})
+		});
+	}
+
+	useEffect(() => {
+		writeRecord();
+	}, [answer]);
+
+	async function fetchSolution() {
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const res = await fetch(
+			'http://localhost:3000/api/interpolation/get?' +
+				new URLSearchParams({
+					id: id
+				}).toString(),
+			{
+				method: 'GET'
+			}
+		);
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		return data;
+	}
+
+	useEffect(() => {
+		const setResourceData = async () => {
+			const id = new URLSearchParams(window.location.search).get('id');
+			if (id === null) return;
+
+			const data = await fetchSolution();
+			let x = data.x;
+			let y = data.y;
+			let answer = data.answer;
+			let graph = data.graph;
+			let numPoint = data.numberOfPoint;
+			let target = data.xToFind;
+
+			setGraph(graph);
+			setAnswer(answer);
+			setXToFind(target);
+			let structureDataFetch = Array.from(
+				{ length: numPoint },
+				(_, idx) => new Point([x[idx]], y[idx])
+			);
+
+			setGivenData(structureDataFetch);
+		};
+
+		setResourceData();
+	}, [typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '']);
 
 	return (
 		<div className="flex flex-col items-center gap-6">
@@ -144,9 +217,20 @@ export default function Page() {
 				<Card className="flex w-11/12 max-w-xl">
 					{methodMenu.map((methodName, index) => (
 						<Button
-              key={methodName}
+							key={methodName}
 							size="large"
 							variant="contained"
+							component={NextLinkComposed}
+							to={{
+								pathname: `${
+									typeof location === 'undefined'
+										? 'http://localhost:3000/interpolation/spline'
+										: location.protocol + '//' + location.host + location.pathname
+								}`,
+								query: {
+									type: methodName + 'Spline'
+								}
+							}}
 							className={`m-1 h-16 w-1/3 text-black ${
 								method == index ? 'bg-green-400 hover:bg-green-300' : 'hover:bg-green-300'
 							}`}

@@ -1,5 +1,5 @@
 import Graph from "@/components/interpolation/graph";
-import Input from "../../components/interpolation/input"
+import Input from "../../components/regression/input"
 import ShowSolution from "@/components/interpolation/show-solution"
 import { useEffect, useRef, useState } from "react";
 import Data from "@/class/interpolation/Data";
@@ -21,7 +21,6 @@ export default function Page() {
   const [xToFind, setXToFind] = useState<number>(0);
 
   useEffect(() => {
-    if ( givenData.length < 1) return ;
 
     const setOfx = givenData.map((data) => data.point.x[0]);
     const setOfy = givenData.map((data) => data.point.y);
@@ -45,15 +44,90 @@ export default function Page() {
   const count = useRef(0);
   
   useEffect(() => {
-    if ( count.current > 1 && process.env.NODE_ENV === "development" ||
-				 count.current > 0 && process.env.NODE_ENV === "production") {
-          const {data, target : x, mOrder} = inputData;
-      setGivenData(data);
-      setXToFind(x);
-      setMOrder(mOrder);
-    }
-    count.current++;
+
+    if ( inputData.data.length < mOrder + 1) return ;
+
+    const {data, target : x, mOrder : mOrderInp} = inputData;
+    setGivenData(data);
+    setXToFind(x);
+    setMOrder(mOrderInp);
+
   }, [inputData]);
+
+  async function writeRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		if (isNaN(answer)) return;
+
+		const res = await fetch('/api/regression/add', {
+			method: 'POST',
+			body: JSON.stringify({
+				numberOfPoint: givenData.length,
+				x: givenData.map((data) => data.point.x[0]),
+				y: givenData.map((data) => data.point.y),
+				xToFind: [Number(xToFind)],
+				answer: answer,
+				graph: graph,
+        mOrder : mOrder,
+				type: type
+			})
+		});
+    console.log(res);
+	}
+
+	useEffect(() => {
+		writeRecord();
+	}, [answer]);
+
+  async function fetchSolution() {
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const res = await fetch(
+			'http://localhost:3000/api/regression/get?' +
+				new URLSearchParams({
+					id: id
+				}).toString(),
+			{
+				method: 'GET'
+			}
+		);
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		return data;
+	}
+
+	useEffect(() => {
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const setResourceData = async () => {
+
+			const data = await fetchSolution();
+      let x = data.x;
+      let y = data.y;
+      let numPoint = data.numberOfPoint;
+      let graph = data.graph;
+      let answer = data.answer;
+      let xToFind = data.xToFind[0];
+
+			let structureDataFetch = Array.from({length : numPoint}, (_, idx) => new Data(true, new Point([x[idx]], y[idx])) );
+
+      setGraph(graph);
+      setAnswer(answer);
+      setMOrder(mOrder);
+      setXToFind(xToFind);
+      setGivenData(structureDataFetch);
+
+			// setInputData({structureDataFetch, target, 0});
+		};
+
+		setResourceData();
+	}, [typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '']);
 
   return (
     <div className="flex flex-col gap-6 items-center">

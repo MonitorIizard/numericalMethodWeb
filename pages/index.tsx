@@ -25,13 +25,13 @@ function Page() {
 	let InterpolationLink = [
 		{id:"1", name: 'Newton Divide Difference', link: './interpolation/newton-divided-difference?type=NewtonDivideDifference'},
 		{id:"2", name: 'Lagrange', link: './interpolation/lagrange?type=Lagrange'},
-		{id:"3", name: 'Spline', link: './interpolation/spline?type=Spline'}
+		{id:"3", name: 'Spline', link: './interpolation/spline'}
 	]
 
 	let regressionLink = [
-		{id:"1", name: 'Linear Regression', link: './regression/linear-regression'},
-		{id:"2", name: 'Polynomial Regression', link: './regression/polynomial-regression'},
-		{id:"3", name: 'Multiple Linear Regression', link: './regression/multiple-linear-regression'},
+		{id:"1", name: 'Linear Regression', link: './regression/linear-regression?type=LinearRegression'},
+		{id:"2", name: 'Polynomial Regression', link: './regression/polynomial-regression?type=PolynomialRegression'},
+		{id:"3", name: 'Multiple Linear Regression', link: './regression/multiple-linear-regression?type=MultipleLinearRegression'},
 	]
 
 	let integrationLink = [

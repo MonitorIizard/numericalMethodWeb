@@ -30,7 +30,7 @@ export default function Page({
 		if ( type == null ) return;
 
 		const res = await fetch(
-			'http://localhost:3000/api/interpolation/list?' +
+			'http://localhost:3000/api/regression/list?' +
 				new URLSearchParams({
 					type: type!
 				}),
@@ -93,6 +93,9 @@ export default function Page({
 									<br />
 									<br />
 									<InlineMath>{`\\text{x to find = ${record.xToFind}}`}</InlineMath>
+									<br />
+									<br />
+									<InlineMath>{`\\text{m order = ${record.morder}}`}</InlineMath>
 									<br />
 									<br />
 									<InlineMath>{`\\text{answer = ${record.answer}}`}</InlineMath>

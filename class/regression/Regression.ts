@@ -90,6 +90,7 @@ class Regression {
         matrixA.push([]);
         for ( let j = 0; j < m + 1; j++) {
           matrixA[i].push(setOfSigmaX[i + j]);
+
         }
       }
 
@@ -103,6 +104,7 @@ class Regression {
         let sum = 0;
           for ( let j = 0; j < n; j++) {
             sum += Math.pow(x[j], i) * y[j]
+
           } 
         matrixB.push(sum);
       }
@@ -110,8 +112,7 @@ class Regression {
       return matrixB;
     }
 
-    let matrixX = Matrix.rowEcholonForm(initialMatrixA(), initialMatrixB());
-
+    let matrixX = Matrix.crammerRule(initialMatrixA(), initialMatrixB());
     return matrixX;
   }
 

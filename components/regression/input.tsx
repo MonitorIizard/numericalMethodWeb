@@ -145,7 +145,7 @@ export default function Input({ setInputData, m }: Props) {
 		if (id === null) return;
 
 		const res = await fetch(
-			'http://localhost:3000/api/interpolation/get?' +
+			'http://localhost:3000/api/regression/get?' +
 				new URLSearchParams({
 					id: id
 				}).toString(),

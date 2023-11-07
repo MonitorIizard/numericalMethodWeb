@@ -47,3 +47,16 @@ model interpolation {
   graph Json
   type String
 }
+
+model regression {
+  id Int @id @default(autoincrement())
+  time DateTime @default(now())
+  numberOfPoint Int
+  x Json
+  y Json
+  xToFind Json
+  answer Float
+  graph Json?
+  morder Int @default(1)
+  type String
+}
