@@ -23,19 +23,8 @@ export default function Page() {
     const setOfx = givenData.map((data) => data.point.x);
     const setOfy = givenData.map((data) => data.point.y);
     const answer =Regression.multipleLinearRegression(setOfx, setOfy, xToFind);
-    
-    // let step = Math.floor(Math.log(Math.abs(setOfx[0] - setOfx[setOfx.length - 1])) / Math.log(10));
-		// step = Math.pow(10, step - 1);
-
+    console.log(answer);
     setAnswer(answer);
-    // setGraph(() => {
-    //   const next : Point[] = [];
-    //   for ( let x = setOfx[0]; x <= setOfx[setOfx.length - 1]; x += step ) {
-    //     const y = setOfA.reduce((sum, a, i) => sum + a * Math.pow(x, i), 0);
-    //     next.push(new Point([x], y));
-    //   }
-    //   return next;
-    // });
   }, [givenData, mOrder, xToFind]);
 
   const count = useRef(0);
@@ -49,6 +38,70 @@ export default function Page() {
     }
     count.current++;
   }, [inputData]);
+
+  async function writeRecord() {
+		const type = new URLSearchParams(window.location.search).get('type');
+
+		if (isNaN(answer)) return;
+
+		const res = await fetch('/api/regression/add', {
+			method: 'POST',
+			body: JSON.stringify({
+				numberOfPoint: givenData.length,
+				x: givenData.map((data) => data.point.x),
+				y: givenData.map((data) => data.point.y),
+				xToFind: xToFind,
+				answer: answer,
+				type: type
+			})
+		});
+    console.log(res);
+	}
+
+	useEffect(() => {
+		writeRecord();
+	}, [answer]);
+
+  async function fetchSolution() {
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const res = await fetch(
+			'http://localhost:3000/api/regression/get?' +
+				new URLSearchParams({
+					id: id
+				}).toString(),
+			{
+				method: 'GET'
+			}
+		);
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		return data;
+	}
+
+  useEffect(() => {
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const setResourceData = async () => {
+
+			const data = await fetchSolution();
+      let answer = data.answer;
+      let xToFind = data.xToFind;
+
+      setAnswer(answer);
+      setXToFind(xToFind);
+
+			// setInputData({structureDataFetch, target, 0});
+		};
+
+		setResourceData();
+	}, [typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '']);
 
   return (
     <div className="flex flex-col gap-6 items-center">

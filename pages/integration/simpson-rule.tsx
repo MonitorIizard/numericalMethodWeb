@@ -37,6 +37,58 @@ export default function Page() {
     })
   }, [data])
 
+  async function writeRecord() {
+    const type = new URLSearchParams(window.location.search).get("type");
+
+    const res = fetch("/api/integrated/add", {
+      method : "POST",
+      body: JSON.stringify({
+        equation : data?.equation,
+        x_start : data?.xStart,
+        x_end : data?.xEnd,
+        calAnswer : answer,
+        realAnswer : realValue,
+        error : error,
+        n : data?.n,
+        graph : graph,
+        type : type
+    })
+  })
+  }
+
+  useEffect(() => {
+    writeRecord();
+  }, [answer])
+
+  async function fetchData() {
+    const id = new URLSearchParams(window.location.search).get("id");
+
+    if ( id == null ) return ;
+    const res = await fetch("/api/integrated/get?" + new URLSearchParams({id : id!}), {
+      method : "GET"
+    });
+
+    const json = await res.json();
+    const data = json.data[0];
+
+    return data;
+  }
+
+  useEffect(() => {
+    const setDataInp = async () => {
+      const data = await fetchData();
+      if ( data === undefined ) return;
+      
+      setGraph(data.graph);
+      setAnswer(data.calAnswer);
+      setRealValue(data.realAnswer);
+      setError(data.error);
+      // console.log(data);
+    }
+
+    setDataInp();
+  }, [typeof window != "undefined" ? new URLSearchParams(window.location.search).get("id") : ""]);
+
   return (
   <div className="flex flex-col items-center gap-4">
       <h1 className="text-3xl text-center font-bold py-4">Simpson</h1>

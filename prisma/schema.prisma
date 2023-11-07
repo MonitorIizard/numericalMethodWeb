@@ -60,3 +60,33 @@ model regression {
   morder Int @default(1)
   type String
 }
+
+model integrated {
+  id Int @id @default(autoincrement())
+  time DateTime @default(now())
+  equation String
+  x_start Float
+  x_end Float
+  n Int
+  calAnswer Float
+  realAnswer Float
+  error Float
+  graph Json
+  type String
+}
+
+model derivative {
+  id Int @id @default(autoincrement())
+  time DateTime @default(now())
+  equation String
+  derivativeEquation String
+  xToFind Float
+  stepSize Float
+  derivativeOrder String
+  direction String
+  accuracy String
+  calAnswer Float
+  realAnswer Float
+  error Float
+  type String
+}

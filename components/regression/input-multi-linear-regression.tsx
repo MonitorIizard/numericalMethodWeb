@@ -1,4 +1,4 @@
-import { Card, Checkbox, TextField } from '@mui/material';
+import { Button, Card, Checkbox, TextField } from '@mui/material';
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,31 +7,41 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Point from '@/class/interpolation/Point';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import Data from '@/class/interpolation/Data';
+import History from './history';
+import HistoryIcon from '@mui/icons-material/History';
+import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded';
 
 type Props = {
 	setInputData?: (value: { data: Data[]; target: number[] }) => void;
 };
 
 export default function Input({ setInputData }: Props) {
-	const [numberOfPoint, setNumberOfPoint] = useState<number>(5);
-	const [data, setData] = useState<Data[]>( () => {
-		let boxOfX = Array.from({ length: numberOfPoint }, () => NaN);
-		return Array.from({ length: numberOfPoint }, () => new Data(false, new Point(boxOfX, NaN)))	
-	}
-	);
+	const [numberOfPoint, setNumberOfPoint] = useState<number>(4);
+	const numberOfPointRef = React.useRef<number>(4);
 	const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
-	const [xToFind, setXToFind] = useState<number[]>(Array.from({ length: 3 }, () => NaN));
+	const isCheckAllRef = useRef<boolean>(false);
+	const [xToFind, setXToFind] = useState<number[]>(Array.from({ length: 2 }, () => NaN));
 	const [numberOfx, setNumberOfx] = useState<number>(2);
+	const [data, setData] = useState<Data[]>( () => {
+		return Array.from({ length: numberOfPoint }, () => {
+			let boxOfX = Array.from({ length: numberOfx }, () => NaN);
+			return new Data(false, new Point(boxOfX, NaN))
+		}
+		)
+		}	
+	);
+	const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
 	function resize(value: number) {
 		setNumberOfPoint((prev) => {
 			if (value <= 0) {
 				return prev;
 			}
+			numberOfPointRef.current = value;
 			return value;
 		});
 
@@ -92,7 +102,7 @@ export default function Input({ setInputData }: Props) {
 		// console.log(value);
 
 		if (name.includes('Find')) {
-			const i = Number(name[name.length - 1]);
+			const i = Number(name.split("-")[1]);
 			setXToFind((prev) => {
 				const next = [...prev];
 				next[i] = Number(value);
@@ -102,18 +112,22 @@ export default function Input({ setInputData }: Props) {
 		}
 
 		if (name.includes('x')) {
-			const i = Number(name[1]);
-			const j = Number(name[2]);
-			console.log(i, j);
+			const i = Number(name.split("-")[1]);
+			const j = Number(name.split("-")[2]);
+
 			setData((prev) => {
 				const next = [...prev];
+				// console.log(next[i].point.x[j]);
 				next[i].point.x[j] = Number(value);
+				// console.log(next[0].point.x[0]);
+
 				return next;
+
 			});
 		}
 
 		if (name.includes('y')) {
-			const i = Number(name[1]);
+			const i = Number(name.split("-")[1]);
 			setData((prev) => {
 				const next = [...prev];
 				next[i].point.y = Number(value);
@@ -122,38 +136,101 @@ export default function Input({ setInputData }: Props) {
 		}
 
 		if (name.includes('check')) {
-			const i = Number(name[name.length - 1]);
+			const i = Number(name.split("-")[1]);
 			setData((prev) => {
 				const next = [...prev];
 				next[i].isChecked = !next[i].isChecked;
 				return next;
 			});
 		}
+	}
 
+	function markAll( e?: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, SET? : boolean) {
+		let temp = false;
+
+		if ( SET != undefined ) {
+			temp = !SET;
+			isCheckAllRef.current = SET;
+
+		} else {
+			temp = isCheckAllRef.current;
+			isCheckAllRef.current = !isCheckAllRef.current;
+		}
+
+		setData((prev) => {
+			const next = [...prev];
+			next.forEach((data, index) => {
+				data.isChecked = !temp;
+			});
+			return next.splice(0, numberOfPointRef.current);
+		});
+
+		setIsCheckAll((prev) => { 
+			// isCheckAllRef.current = prev; 
+			return !temp;
+		});
+	}
+
+	function submitData() {
 		setInputData && setInputData({ data: data.filter((row) => row.isChecked), target: xToFind });
 	}
 
-	function markAll(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-		setData((prev) => {
-			const next = [...prev];
-			next.forEach((data) => {
-				data.isChecked = !isCheckAll;
-			});
-			return next.splice(0, numberOfPoint);
-		});
+	async function fetchSolution() {
+		const id = new URLSearchParams(window.location.search).get('id');
 
-		setIsCheckAll((prev) => !prev);
-		// setInputData && setInputData({ data : data.filter((row) => row.isChecked), xToFind});
+		if (id === null) return;
+
+		const res = await fetch(
+			'http://localhost:3000/api/regression/get?' +
+				new URLSearchParams({
+					id: id
+				}).toString(),
+			{
+				method: 'GET'
+			}
+		);
+
+		const json = await res.json();
+		const data = json.data[0];
+
+		return data;
 	}
 
 	useEffect(() => {
-		setInputData && setInputData({ data: data.filter((row) => row.isChecked), target: xToFind });
-	}, [data, xToFind]);
+		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id === null) return;
+
+		const setResourceData = async () => {
+
+			const data = await fetchSolution();
+      let xToFind = data.xToFind;
+			let numberOfPoint = data.numberOfPoint;
+			let x = data.x;
+			let y = data.y;
+
+			let structureDataFetch = Array.from({length : numberOfPoint}, (_,idx) => new Data(true, new Point(x[idx], y[idx])));
+
+      setXToFind(xToFind);
+			setData(structureDataFetch);
+
+			markAll(undefined, true);
+
+			// setInputData({structureDataFetch, target, 0});
+		};
+
+		setResourceData();
+	}, [typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '']);
 
 	return (
 		<Card className="w-11/12 max-w-xl p-4 flex flex-col gap-4">
 			<div className="sticky flex">
-
+			<div
+					className=" absolute right-0 top-0 z-50 -translate-y-1/2"
+					onClick={() => setIsHistoryOpen((prev) => !prev)}
+				>
+					<HistoryIcon className="fill-black " />
+				</div>
 				<TextField
 					className=""
 					label="number of X"
@@ -185,7 +262,7 @@ export default function Input({ setInputData }: Props) {
 								className={`min-w-[8rem]`}
 								label={`X target ${idx}`}
 								type="number"
-								name={`Find${idx}`}
+								name={`Find-${idx}`}
 								required
 								value={Number.isNaN(xToFind[idx]) ? '' : xToFind[idx]}
 								onChange={(e) => onChangeHandle(e)}
@@ -225,13 +302,13 @@ export default function Input({ setInputData }: Props) {
 								return (
 									<TableRow
 										className={row.isChecked ? 'color-white bg-slate-300' : ''}
-										key={`row=${index}`}
+										key={`row-${index}`}
 									>
 										<TableCell size="small" align="center" className="w-10">
 											<Checkbox
 												onChange={(e) => onChangeHandle(e)}
 												checked={row.isChecked}
-												name={`check${index}`}
+												name={`check-${index}`}
 											/>
 										</TableCell>
 
@@ -246,7 +323,7 @@ export default function Input({ setInputData }: Props) {
 														className="w-20"
 														fullWidth
 														label={`x${index + 1}${idx + 1}`}
-														name={`x${index}${idx}`}
+														name={`x-${index}-${idx}`}
 														value={Number.isNaN(row.point.x[idx]) ? '' : row.point.x[idx]}
 														required
 														type="number"
@@ -261,7 +338,7 @@ export default function Input({ setInputData }: Props) {
 												className="w-20"
 												label={`y${index + 1}`}
 												value={Number.isNaN(row.point.y) ? '' : row.point.y}
-												name={`y${index}`}
+												name={`y-${index}`}
 												required
 												onChange={(e) => onChangeHandle(e)}
 											/>
@@ -273,6 +350,19 @@ export default function Input({ setInputData }: Props) {
 					</Table>
 				</TableContainer>
 			</div>
+
+			<Button
+				variant="contained"
+				type="submit"
+				className="mx-auto mt-4 bg-black"
+				startIcon={<CalculateRoundedIcon />}
+				size="large"
+				onClick={() => submitData()}
+				fullWidth
+			>
+				Calculate 😉
+			</Button>
+			<History isOpen={isHistoryOpen} setOpen={setIsHistoryOpen} />
 		</Card>
 	);
 }

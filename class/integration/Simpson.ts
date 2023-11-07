@@ -14,8 +14,6 @@ export default class Simpson extends Integration {
   solve(): number {
     if (this.inputData == null ) {return 0;}
 
-    console.log(this.inputData.equation);
-
     let n = this.inputData.n;
     let range = { xStart : this.inputData.xStart, xEnd : this.inputData.xEnd };
     let h = (range.xEnd - range.xStart) / (2 * n);

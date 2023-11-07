@@ -35,12 +35,12 @@ function Page() {
 	]
 
 	let integrationLink = [
-		{id:"1", name: 'Trapezoidal Rule', link: './integration/trapezoidal-rule'},
-		{id:"2", name: 'Simpson Rule', link: './integration/simpson-rule'},
+		{id:"1", name: 'Trapezoidal Rule', link: './integration/trapezoidal-rule?type=TrapezoidalRule'},
+		{id:"2", name: 'Simpson Rule', link: './integration/simpson-rule?type=SimpsonRule'},
 	]
 
 	let differentiationLink = [
-		{id:"1", name: 'Ordinary Derivative', link: './derivative/derivative'},
+		{id:"1", name: 'Ordinary Derivative', link: './derivative/derivative?type=OrdinaryDerivative'},
 	]
 
 	let typeOfProblem : {[key : string] : {id : string, name : string, link : string}[] } = {

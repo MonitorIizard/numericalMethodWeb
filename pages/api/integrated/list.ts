@@ -5,13 +5,17 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
-  const { id } = req.query;
-  console.log(id);
-  const data = await prisma.root_of_equation.findMany({
-    where : {
-      id : Number(id)
-    }
-  });
-  console.log(data);
-  return res.status(200).json({ data : data });
+  const {type}  = req.query;
+
+  try {
+    const data = await prisma.integrated.findMany({
+      where: {
+        type: type as string
+      }
+    });  
+	  return res.status(200).json({ data : data });
+  } catch(e) {
+    console.log(e);
+    return res.status(400).json({ data : "error there is no list"});    
+  }
 }

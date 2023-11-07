@@ -12,7 +12,7 @@ type GraphProps = {
 }
 
 export default function Graph({graph, points, answerPoint, largrangGraph} : GraphProps) {
-
+  
   const dataProps : Data[] = Array.from({length : largrangGraph?.length ? largrangGraph?.length : 0 }, (v, i) => {
     return { 
     x: largrangGraph![i].map((point) => point.x[0]),
