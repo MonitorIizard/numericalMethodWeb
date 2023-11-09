@@ -1,12 +1,7 @@
 import InputData from "./InputData";
 import RootOfEquation from "./RootOfEquation";
 import SetOfResult from "./SetOfResult";
-import { evaluate } from "mathjs";
-
-interface solveArguement {
-	setAnswer: (value: string[]) => void;
-	setResult: (value: SetOfResult[]) => void;
-}
+import { evaluate } from "mathjs"; 
 
 export default class GraphicalMethod extends RootOfEquation {
 	constructor( inputData : InputData ) {

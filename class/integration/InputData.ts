@@ -1,4 +1,4 @@
-export default class InputData {
+export default class eInputData {
   equation : string;
   xStart : number;
   xEnd : number;

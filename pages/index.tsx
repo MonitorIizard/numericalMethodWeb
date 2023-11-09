@@ -2,7 +2,7 @@ import { Card } from '@mui/material';
 import Link from 'next/link';
 
 function Page() {
-	let LinerAlgebraLink = [
+	let LinearAlgebraLink = [
 		{id:"1L", name: 'Crammer Rule', link: './linear-algebra/crammer-rule?type=CrammerRule'},
 		{id:"2L", name: 'Gauss Elimination', link: './linear-algebra/gauss-elimination?type=GaussElimination'},
 		{id:"3L", name: 'Gauss Jordan', link: './linear-algebra/gauss-jordan?type=GaussJordan'},
@@ -45,7 +45,7 @@ function Page() {
 
 	let typeOfProblem : {[key : string] : {id : string, name : string, link : string}[] } = {
 		RootOfEquation : RootOfEquationLink,
-		LinerAlgebra : LinerAlgebraLink,
+		LinerAlgebra : LinearAlgebraLink,
 		Interpolation : InterpolationLink,
 		Regression : regressionLink,
 		Integration : integrationLink,

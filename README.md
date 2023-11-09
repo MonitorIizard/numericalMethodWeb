@@ -2,7 +2,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+
+First, `npm i` and run the development server:
 
 ```bash
 npm run dev
@@ -13,6 +14,16 @@ pnpm dev
 # or
 bun dev
 ```
+
+Second, to use history feature you have to create `mySql` data base and then set `DATABASE_URL=` to your dbURL
+
+example ` DATABASE_URL="mysql://root:nm@localhost:3308/numerical" `
+
+unless it will error
+
+Third, run `npx prisma migrate dev`
+
+for more `https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-mysql`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

@@ -19,7 +19,7 @@ export default abstract class Integration {
 
   calError() : {error : number, realValue : number } {
     if (null == this.inputData) { return {error : 0, realValue : 0};}
-    if ( Number.isNaN(this.approximation) ) { 
+    if ( Number.isNaN(this.approximation)  ) { 
       this.solve();
     }
 

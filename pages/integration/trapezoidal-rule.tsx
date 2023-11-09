@@ -64,6 +64,7 @@ export default function Page() {
     const id = new URLSearchParams(window.location.search).get("id");
 
     if ( id == null ) return ;
+    
     const res = await fetch("/api/integrated/get?" + new URLSearchParams({id : id!}), {
       method : "GET"
     });
